@@ -6,11 +6,12 @@ import {
   useColorScheme,
   StatusBar,
   Platform,
+  TouchableOpacity
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 import * as SecureStore from "expo-secure-store";
-import { TextInput, Button, Modal, Portal } from "react-native-paper";
+import { TextInput, Button, Modal, Portal , Avatar, Divider, SegmentedButtons} from "react-native-paper";
 import { API_URL } from "@env";
 import moment from "moment";
 import DatePicker from "react-datepicker";
@@ -18,6 +19,7 @@ import Toast from "react-native-root-toast";
 import styles from "./styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import UserModal from "../../components/EmployeesModal";
+
 
 const AddTasks = ({ navigation }) => {
   const [start_date, setStartDate] = useState(new Date());
@@ -27,8 +29,11 @@ const AddTasks = ({ navigation }) => {
   const [show, setShow] = useState(false);
   const [showEnd, setEndTimeShow] = useState(false);
   const [token, setToken] = useState();
-  const [employees, setEmployees] = useState();
+  const [employees, setEmployees] = useState([]);
   const [loading, setIsLoading] = useState(false);
+  const[selectedEmployee, setSelectedEmployee] = useState([])
+  const [priority, setPriority] = useState('')
+  const [value, setValue] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -52,21 +57,23 @@ const AddTasks = ({ navigation }) => {
     fetch(`${API_URL}/employers/all-employees`, {
       headers,
     })
-      .then((response) => response.json())
-      .then(async (response) => {
-        console.log({ response });
+      .then((response) => {
+        console.log("het",response.status)
         if (response.status === 403) {
           Toast.show(`Your session has expired, kindly login and try again`, {
             duration: Toast.durations.LONG,
           });
-          await SecureStore.deleteItemAsync("token")
-            .then(() => navigation.replace("Login"))
+           SecureStore.deleteItemAsync("token")
+            .then(() => navigation.replace("Login Screen"))
             .catch((error) =>
               Toast.show(error.message, {
                 duration: Toast.durations.LONG,
               })
-            );
-        } else if (response.success === false) {
+            );}
+      return response.json()})
+      .then(async (response) => {
+        
+         if (response.success === false) {
           console.log({ response });
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
@@ -78,7 +85,7 @@ const AddTasks = ({ navigation }) => {
         setIsLoading(true);
       })
       .catch((error) => {
-        // await SecureStore.deleteItemAsync('token') .then(() => navigation.replace('Login'))
+       
 
         console.log({ error });
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
@@ -89,9 +96,9 @@ const AddTasks = ({ navigation }) => {
     const currentDate = selectedDate;
     setShow(false);
     setStartDate(currentDate);
+    console.log("mh",start_date.toString())
   };
   const onChangeEndDate = (event, selectedDate) => {
-    console.log("Hello");
     const currentDate = selectedDate;
     setEndTimeShow(false);
     setEndDate(currentDate);
@@ -123,6 +130,15 @@ const AddTasks = ({ navigation }) => {
     showEndTimeMode("time");
   };
 
+  const selectedEmployees = (employee) =>{
+    console.log("employee", employee)
+setSelectedEmployee(employee)
+console.log({selectedEmployee})
+  }
+
+
+  
+
   const colorScheme = useColorScheme();
   const themeTextStyle =
     colorScheme === "light" ? styles.lightTextColor : "#000000";
@@ -136,6 +152,7 @@ const AddTasks = ({ navigation }) => {
   const tasksValidationSchema = yup.object().shape({
     location: yup.string().required("Location is required"),
     description: yup.string().required("Description is required"),
+    assigneeId:yup.array().min(1,"At least one assignee is needed").required('Assignee is required'),
     //       start_date: yup.date()
     //       .max(new Date(), ()=>({ id: 'start_date.error.max' }))
     //       .required(),
@@ -154,26 +171,62 @@ const AddTasks = ({ navigation }) => {
     //         return true
     //       }
     //     }),
-    password: yup.string().required("Password is required"),
+    // password: yup.string().required("Password is required"),
   });
+  const handleSubmit = (values, formikActions) => {
+		console.log(values)
+    const headers = {
+      Authorization: "Bearer " + token,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+		try {
+			fetch(`${API_URL}/employers/add-task`, {
+				method: 'POST',
+				headers: headers,
+				body: JSON.stringify(values),
+			})
+				.then((response) => response.json())
+				.then(async (response) => {
+					formikActions.setSubmitting(true);
+console.log(response)
+					if (response.status === 200) {
+						Toast.show(response.message, {
+							duration: Toast.durations.LONG,
+						});
 
-  const handleDateChange = () => {
-    setStartDate(start_date);
-  };
+
+					} else {
+						Toast.show(response.error, {
+							duration: Toast.durations.LONG,
+						});
+						formikActions.setSubmitting(false);
+					}
+				})
+				.catch((error) => {
+					Toast.show(error.message, { duration: Toast.durations.LONG });
+				});
+
+			formikActions.setSubmitting(false);
+		} catch (error) {
+			Toast.show(error.message, { duration: Toast.durations.LONG });
+		}
+	};
+ 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <StatusBar backgroundColor={"#276EF1"} barStyle="light-content" />
       <Formik
-        // validationSchema={loginValidationSchema}
+        // validationSchema={tasksValidationSchema}
         initialValues={{
           location: "",
-          start_time: "",
-          end_time: "",
+          startTime: start_date.toString(),
+          endTime: end_date.toString(),
           description: "",
           priority: "",
-          assignee: "",
+          assigneeId: selectedEmployee,
         }}
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
       >
         {({
           handleChange,
@@ -310,62 +363,82 @@ const AddTasks = ({ navigation }) => {
 
             <Text style={{ fontSize: 18 }}>Task priority:</Text>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+             
             >
-              <Button
-                mode="contained"
-                uppercase={false}
-                style={styles.high}
-                textColor="#ffffff"
-                labelStyle={buttonTextStyle}
-                //   onPress={showEndTimepicker}
-              >
-                High
-              </Button>
-              <Button
-                mode="contained"
-                uppercase={false}
-                style={styles.medium}
-                textColor="#ffffff"
-                labelStyle={buttonTextStyle}
-                //   onPress={showEndTimepicker}
-              >
-                Medium
-              </Button>
-              <Button
-                mode="contained"
-                uppercase={false}
-                style={styles.low}
-                textColor="#ffffff"
-                labelStyle={buttonTextStyle}
-                //   onPress={showEndTimepicker}
-              >
-                Low
-              </Button>
+              <SegmentedButtons
+        value={values.priority}
+        onValueChange={handleChange('priority')}
+        style={{ flexDirection: "row", justifyContent: "space-between" }}
+        buttons={[
+          {
+            value: 'high',
+            label: 'High',
+            style : styles.high
+          },
+          {
+            value: 'medium',
+            label: 'Medium',
+            style : styles.medium
+          },
+          { value: 'low', label: 'Low',
+          style : styles.low },
+        ]}
+      />
+              
             </View>
+            {touched.assigneeId && errors.assigneeId && (
+              <Text style={styles.errorText}>{errors.assigneeId}</Text>
+            )}
             {/* Assignee */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}> 
             <Text style={{ fontSize: 18 }}>Assigned To:</Text>
-            <Button
-              style={{ marginTop: 30 }}
+            <TouchableOpacity
+            
               onPress={() => {
                 setModalVisible(true);
               }}
             >
-              Show
-            </Button>
+              <Text>See Employees</Text>
+            </TouchableOpacity>
+            </View>
+
+            <View style={styles.containerDetails}>
+           
+              {employees.map(item =>
+                   
+                selectedEmployee.map(item2=>
+                 
+                  (item.id === item2) ?
+                    
+                 
+                  <>
+                    <Avatar.Icon size={30} icon="account" />
+                     <Text style={styles.details}>{item.firstName} {item.lastName}</Text> 
+                    <Divider/>
+                    </>
+                   
+      
+                  
+               : null
+                )
+                
+              )}
+                </View>
+                    
+           
+           
             <UserModal
             
               modalVisible={modalVisible}
               setModalVisible={() => {
                 setModalVisible(!modalVisible);
               }}
-              employeeData={employees}
+             employeeData={employees}
+             selectedEmployees={selectedEmployees}
             />
 
             <Button
-              onPress={() => {
-                save(values);
-              }}
+            onPress={handleSubmit}
               mode="contained"
               loading={props.isSubmitting}
               uppercase={false}
@@ -374,7 +447,7 @@ const AddTasks = ({ navigation }) => {
               textColor="#ffffff"
               labelStyle={buttonTextStyle}
             >
-              Login
+              Add Task
             </Button>
           </>
         )}

@@ -9,26 +9,31 @@ import {
     TouchableOpacity,
     View,
     Card,
-    Checkbox,
     Title,
-    Paragraph
+    Paragraph,
+    
   } from "react-native";
-  import styles from "./style.js"
+  import styles from "./style.js";
+  import { Avatar, Divider , Checkbox} from 'react-native-paper';
 
 
-const UserModal =({modalVisible,setModalVisible, employeeData})=>{
+const UserModal =({modalVisible,setModalVisible, employeeData, selectedEmployees})=>{
     const [checkedItems, setCheckedItems] = useState([]);
 
     const isChecked = (id) => {
+  
       return checkedItems.includes(id);
     };
-  
+
     const toggleItem = (id) => {
-      if (isChecked(id)) {
+      if (isChecked(id) === true) {
+
         setCheckedItems(checkedItems.filter(item => item !== id));
+      
       } else {
         setCheckedItems([...checkedItems, id]);
       }
+      selectedEmployees(checkedItems)
     };
     return(
         <Modal
@@ -44,16 +49,19 @@ const UserModal =({modalVisible,setModalVisible, employeeData})=>{
       >
         {/* <View style={styles.centeredView}> */}
           <View style={styles.modalView}>
+            <Text style={styles.heading}>Select Employee</Text>
           <FlatList
         data={employeeData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => toggleItem(item.id)}>
-            <Card>
-              {/* <Card.Content style={s.content}> */}
-                {/* <Checkbox status={isChecked(item.id) ? "checked" : "unchecked"} /> */}
-
-            </Card>
+          <TouchableOpacity onPress={() => toggleItem(item.id)} key={item.id}>
+            <View style={styles.container}>
+            <Checkbox.Item status={isChecked(item.id) ? "checked" : "unchecked"} />
+            <Avatar.Icon size={30} icon="account" />
+              <Text style={styles.details}>{item.firstName} {item.lastName}</Text>
+              <Divider/>
+            </View>
+           
           </TouchableOpacity>
         )}
       />

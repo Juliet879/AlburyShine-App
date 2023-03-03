@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native-web";
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
       backgroundColor: "white",
       borderRadius: 20,
       padding: 35,
-      alignItems: "center",
+      // alignItems: "center",
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -36,6 +36,36 @@ const styles = StyleSheet.create({
     modalText: {
       marginBottom: 15,
       textAlign: "center"
-    }
+    },
+
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    shadowRadius: 2,
+		shadowOpacity: 0.5,
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 1,
+		},
+    borderBottomWidth:1
+    // justifyContent:"space-between"
+
+  },
+  details: {
+		justifyContent: 'center',
+		alignItems: 'flex-start',
+		padding: 10,
+	},
+  heading: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		paddingVertical: 20,
+	},
+
   });
   export default styles

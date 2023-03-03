@@ -34,7 +34,10 @@ const styles = StyleSheet.create({
 		textDecorationStyle: 'capitalized',
 		marginVertical: 20,
 		paddingVertical: 5,
-		borderRadius:5
+		// paddingHorizontal:10,
+		borderRadius:5,
+		
+	
 
 	},
 	medium:{
@@ -107,6 +110,21 @@ const styles = StyleSheet.create({
 		// height: '30%',
 		width: '90%',
 	},
+	details: {
+		justifyContent: 'center',
+		alignItems: 'flex-start',
+		padding: 10,
+	},
+	containerDetails: {
+		flex: 1,
+		flexDirection: "row",
+		padding: 10,
+		flexWrap:"wrap",
+		
+
+		// justifyContent:"space-between"
+	
+	  },
 });
 
 export default styles;
