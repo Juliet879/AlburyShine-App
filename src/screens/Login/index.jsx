@@ -152,7 +152,7 @@ console.log(response)
 							outlineColor="#276ef1"
 							blurOnSubmit
 							style={LoginStyles.input}
-							theme={{ colors: { text: themeTextStyle } }}
+							theme={{ colors: { text: themeTextStyle , onSurface: themeTextStyle} }}
 						/>
 						{touched.password && errors.password && (
 							<Text style={LoginStyles.errorText}>{errors.password}</Text>

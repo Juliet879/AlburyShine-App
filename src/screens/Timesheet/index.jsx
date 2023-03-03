@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from "react";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { DataTable } from 'react-native-paper';
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-root-toast";
+import styles from "./styles";
 
 const optionsPerPage = [10, 10, 10];
 
@@ -68,7 +69,10 @@ const TimeSheet = ()=>{
   }, [itemsPerPage,token]);
 
   return (
-    <DataTable>
+  <ScrollView horizontal>
+      <DataTable
+      style={styles.container}
+      >
       <DataTable.Header>
         <DataTable.Title>Employee Name</DataTable.Title>
         <DataTable.Title >Employee Id</DataTable.Title>
@@ -80,10 +84,11 @@ const TimeSheet = ()=>{
         <DataTable.Title>Status</DataTable.Title>
       </DataTable.Header>
 {timesheet.map(item=>
-    <DataTable.Row>
-        <DataTable.Cell>{item.assignee}</DataTable.Cell>
-        <DataTable.Cell >{item.assigneeId}</DataTable.Cell>
-        <DataTable.Cell >{item.taskDesc}</DataTable.Cell>
+    <DataTable.Row
+    >
+        <DataTable.Cell >{item.assignee}</DataTable.Cell>
+        <DataTable.Cell style={{flex: 6, overflow:"hidden"}}>{item.assigneeId}</DataTable.Cell>
+        <DataTable.Cell style={{flex: 3}}>{item.taskDesc}</DataTable.Cell>
         <DataTable.Cell >{item.startTime}</DataTable.Cell>
         <DataTable.Cell >{item.endTime}</DataTable.Cell>
         <DataTable.Cell numeric >{item.hours}</DataTable.Cell>
@@ -108,6 +113,7 @@ const TimeSheet = ()=>{
         optionsLabel={'Rows per page'}
       />
     </DataTable>
+  </ScrollView>
   );
 }
 export default TimeSheet;
