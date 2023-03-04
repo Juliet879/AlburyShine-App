@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TimeSheet from '../../screens/Timesheet';
 import AdminTasks from '../../screens/AdminTasks';
-import AddTasks from '../../screens/AddTasks';
+import AllEmployees from '../../screens/AllEmployees';
 import {
 	Ionicons,
   FontAwesome5
@@ -22,8 +22,8 @@ const BottomNav = ()=> {
             if (route.name === 'Tasks') {
                 iconName = focused ? 'tasks' : 'tasks';
                 iconColor =focused ?  '#124aa1' : '#828282'
-            } else if (route.name === 'Add Tasks') {
-                iconName = focused ? 'plus-circle' : 'plus-circle';
+            } else if (route.name === 'All Employees') {
+                iconName = focused ? 'users' : 'users';
                 iconColor =focused ?  '#124aa1' : '#828282'
 
             } else if (route.name === 'Timesheet') {
@@ -36,7 +36,7 @@ const BottomNav = ()=> {
     })}
     >
       <Tab.Screen name="Tasks" component={AdminTasks} />
-      <Tab.Screen name="Add Tasks" component={AddTasks} />
+      <Tab.Screen name="All Employees" component={AllEmployees} />
       <Tab.Screen name="Timesheet" component={TimeSheet} />
     </Tab.Navigator>
   );

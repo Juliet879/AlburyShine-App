@@ -4,6 +4,8 @@ import OnboardingScreen from '../../screens/Onboarding';
 import InitialScreen from '../../screens/SplashScreen';
 import Login from '../../screens/Login';
 import BottomNav from '../BottomNav';
+import AddTasks from '../../screens/AddTasks';
+import CreateEmployee from '../../screens/AddEmployees';
 
 const Stack = createStackNavigator();
 const Layout = ()=>{
@@ -16,6 +18,8 @@ const Layout = ()=>{
             <Stack.Screen name='Splash Screen' component={InitialScreen}/>
             <Stack.Screen name='Login Screen' component={Login}/>
             <Stack.Screen name='BottomNav' component={BottomNav}/>
+            <Stack.Screen name='Add Tasks' component={AddTasks}/>
+            <Stack.Screen name='Add Employee' component={CreateEmployee}/>
         </Stack.Navigator>
 
     )

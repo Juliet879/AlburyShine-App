@@ -24,7 +24,7 @@ import Toast from "react-native-root-toast";
 import styles from "./styles";
 import TaskModal from "../../components/TaskModal";
 
-const AdminTasks = ({ navigation }) => {
+const AllEmployees = ({ navigation }) => {
   const [token, setToken] = useState();
   const [loading, setIsLoading] = useState();
   const [tasks, setTasks] = useState([]);
@@ -59,6 +59,7 @@ const AdminTasks = ({ navigation }) => {
         return response.json();
       })
       .then(async (response) => {
+        console.log({response})
         if (response.success === false) {
           console.log({ response });
           Toast.show(response.error, {
@@ -76,45 +77,7 @@ const AdminTasks = ({ navigation }) => {
       });
   };
 
-  const getTasks = () => {
-    const headers = {
-      Authorization: "Bearer " + token,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    };
-    fetch(`${API_URL}/employers/all-tasks`, {
-      headers,
-    })
-      .then((response) => {
-        if (response.status === 403) {
-          Toast.show(`Your session has expired, kindly login and try again`, {
-            duration: Toast.durations.LONG,
-          });
-          SecureStore.deleteItemAsync("token")
-            .then(() => navigation.replace("Login Screen"))
-            .catch((error) =>
-              Toast.show(error.message, {
-                duration: Toast.durations.LONG,
-              })
-            );
-        }
-        return response.json();
-      })
-      .then(async (response) => {
-        if (response.success === false) {
-          Toast.show(response.error, {
-            duration: Toast.durations.LONG,
-          });
-        }
-       
-        setTasks(response.data);
-        setIsLoading(true);
-      })
-      .catch((error) => {
-        console.log({ error });
-        Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
-      });
-  };
+
 
   useEffect(() => {
     (async () => {
@@ -123,7 +86,7 @@ const AdminTasks = ({ navigation }) => {
     })();
 
     if (token !== null && token !== undefined) {
-      getTasks();
+    
       getEmployees();
     }
   }, [token]);
@@ -133,11 +96,11 @@ const AdminTasks = ({ navigation }) => {
   const handleSubmit = (id) => {
    
     const values = {
-      taskId: id,
+      employeeId: id,
     };
     console.log(JSON.stringify(values))
     console.log({token})
-    fetch(`${API_URL}/employers/delete-task`, {
+    fetch(`${API_URL}/employers/delete-employee`, {
       method: "DELETE",
       headers: {
         Authorization: "Bearer " + token,
@@ -153,10 +116,11 @@ const AdminTasks = ({ navigation }) => {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
           });
-          const newTasks= tasks.filter (item=> item.taskId !== id)
-         return setTasks(newTasks)
-        } else {
-          Toast.show(response.error, {
+          const newEmployees= employees.filter (item=> item.id !== id)
+         return setEmployees(newEmployees)
+        } 
+        if (response.status === 404)  {
+          Toast.show(response.message, {
             duration: Toast.durations.LONG,
           });
         }
@@ -172,14 +136,14 @@ const AdminTasks = ({ navigation }) => {
     //function to make two option alert
     Alert.alert(
       //title
-      'Delete task?',
+      'Delete employee?',
       //body
-      'Are you sure you want to delete this task ?',
+      'Are you sure you want to delete this employee ?',
       [
         { text: 'Yes', onPress: () => handleSubmit(id) },
         {
           text: 'No',
-          onPress: () =>  Toast.show('Task deleting canceled', {
+          onPress: () =>  Toast.show('Employee deleting canceled', {
             duration: Toast.durations.LONG,
           }),
           style: 'cancel',
@@ -190,90 +154,57 @@ const AdminTasks = ({ navigation }) => {
     );
   };
 
-  const completedTasks = () => {
-    return tasks.filter((item) => item.completed === true);
-  };
-
-  const completed = tasks.length > 1 ? completedTasks() : null;
-  console.log({ completed });
-  const inCompleteTasks = () => {
-    return tasks.filter((item) => item.completed !== true);
-  };
-
-  const inComplete = tasks.length > 1 ? inCompleteTasks() : null;
   if(loading !== true){
-  return (
-    <>
-     <ActivityIndicator animating={true} color="#276EF1" size="large" style={styles.activity}/>
-     <Text style={styles.activityText}>Loading ...</Text>
-    </>
-  )
-  }
+    return (
+      <>
+       <ActivityIndicator animating={true} color="#276EF1" size="large" style={styles.activity}/>
+       <Text style={styles.activityText}>Loading ...</Text>
+      </>
+    )
+    }
+
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-    <Text style={styles.title}>Tasks Overview</Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Card.Title
-          style={styles.completed}
-          title={
-            <Text style={styles.cards}>
-              {Array.isArray(completed) && completed.length > 1
-                ? completed.length
-                : 0}
-            </Text>
-          }
-          subtitle={<Text style={styles.cardSub}>Completed </Text>}
-          left={(props) => (
-            <Avatar.Icon {...props} icon="folder" style={styles.icons} />
-          )}
-        />
-        <Card.Title
-          style={styles.incomplete}
-          title={
-            <Text style={styles.cards}>
-              {Array.isArray(inComplete) && inComplete.length > 1
-                ? inComplete.length
-                : 0}
-            </Text>
-          }
-          subtitle={<Text style={styles.cardSub}>Incomplete </Text>}
-          left={(props) => (
-            <Avatar.Icon {...props} icon="folder" style={styles.icons} />
-          )}
-        />
-      </View>
+    <Text style={styles.title}>Employees</Text>
+  
       <SafeAreaView>
-        <Text style={styles.heading}>Tasks</Text>
+        {/* <Text style={styles.heading}>Tasks</Text> */}
         <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.taskId}
-          key={(item) => item.taskId}
+          data={employees}
+          keyExtractor={(item) => item.id}
+          key={(item) => item.id}
           renderItem={({ item }) => (
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <TouchableOpacity
-                key={item.taskId}
+                key={item.id}
                 style={{ width:"62%"}}
                 onPress={() => {
-                  setSelectedId(item.taskId);
+                  setSelectedId(item.id);
                   setModalVisible(true);
                   setSelectedData(item);
                 }}
               >
                     <List.Item
-                    title={ <Text style={{ color: "#333235"}}>{item.description}</Text>}
+                    title={ <Text style={{ color: "#333235"}}>{item.firstName} {item.lastName}</Text>}
+                    left={() => (
+                        <>
+                          <List.Icon icon="account" color="#276EF1" />
+                        </>
+                      )}
+                    />
               
            
-            />
+            
                
               </TouchableOpacity>
               <TouchableOpacity
               key={item.editId}
               style={{ color: "#333235" }}
               onPress={()=>{
-                deleteConfirm(item.taskId)
+                deleteConfirm(item.id)
             }
             }
               >
@@ -290,7 +221,7 @@ const AdminTasks = ({ navigation }) => {
               key={item.id}
               style={{ color: "#333235" }}
               onPress={()=>{
-                deleteConfirm(item.taskId)
+                deleteConfirm(item.id)
             }
             }
               >
@@ -298,7 +229,7 @@ const AdminTasks = ({ navigation }) => {
               
               right={() => (
                 <>
-                  <List.Icon icon="delete" color="grey" />
+                  <List.Icon icon="delete-outline" color="grey" />
                 </>
               )}
             />
@@ -307,13 +238,14 @@ const AdminTasks = ({ navigation }) => {
             </View>
           )}
         />
- 
+
       </SafeAreaView>
+      <Divider/>
       <FAB
-    icon="plus"
-    label="Add Task"
+    icon="account-plus"
+    label="Add Employee"
     style={styles.fab}
-    onPress={() => navigation.navigate('Add Tasks')}
+    onPress={() => navigation.navigate('Add Employee')}
   />
       <TaskModal
         employees={employees}
@@ -325,4 +257,4 @@ const AdminTasks = ({ navigation }) => {
     </View>
   );
 };
-export default AdminTasks;
+export default AllEmployees;

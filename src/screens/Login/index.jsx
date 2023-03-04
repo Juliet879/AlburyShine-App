@@ -134,6 +134,7 @@ console.log(response)
 							outlineColor="#276ef1"
 							style={[LoginStyles.input, themeTextStyle]}
 							theme={{ colors: { text: themeTextStyle } }}
+							textColor={themeTextStyle}
 						/>
 
 						{touched.phone && errors.phone && (
@@ -153,6 +154,7 @@ console.log(response)
 							blurOnSubmit
 							style={LoginStyles.input}
 							theme={{ colors: { text: themeTextStyle , onSurface: themeTextStyle} }}
+							textColor={themeTextStyle}
 						/>
 						{touched.password && errors.password && (
 							<Text style={LoginStyles.errorText}>{errors.password}</Text>
@@ -173,24 +175,10 @@ console.log(response)
 						>
 							Login
 						</Button>
-						{/* <TouchableOpacity>
-							<Button
-								textColor="#ffffff"
-								labelStyle={{ color: '#124AA1' }}
-								uppercase={false}
-								onPress={() => setVisible(true)}
-							>
-								Reset Password
-							</Button>
-						</TouchableOpacity> */}
+						
 					</>
 				)}
 			</Formik>
-			{/* <PasswordReset
-				modalVisible={visible}
-				onRequestClose={() => setVisible(!visible)}
-				onPress={() => setVisible(!visible)}
-			/> */}
 		</ScrollView>
 	);
 };

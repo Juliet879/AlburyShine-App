@@ -144,11 +144,8 @@ console.log({selectedEmployee})
     colorScheme === "light" ? styles.lightTextColor : "#000000";
   const buttonTextStyle =
     colorScheme === "light" ? styles.lightButtonColor : styles.darkButtonColor;
-  const labelTextStyle = colorScheme === "light" ? "#252524" : "#252524";
-  const Label = <Text style={{ color: labelTextStyle }}>Location</Text>;
-  const DescriptionLabel = (
-    <Text style={{ color: labelTextStyle }}>Description</Text>
-  );
+  const labelTextStyle = colorScheme === "light" ? styles.lightTextColor: styles.lightTextColor;
+
   const tasksValidationSchema = yup.object().shape({
     location: yup.string().required("Location is required"),
     description: yup.string().required("Description is required"),
@@ -216,6 +213,7 @@ console.log(response)
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <StatusBar backgroundColor={"#276EF1"} barStyle="light-content" />
+      <Text style={styles.title}>Add Task</Text>
       <Formik
         // validationSchema={tasksValidationSchema}
         initialValues={{
@@ -239,7 +237,7 @@ console.log(response)
           ...props
         }) => (
           <>
-            <Text style={{ fontSize: 18 }}>Location:</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Location:</Text>
             <TextInput
               name="Location"
               mode="outlined"
@@ -252,12 +250,13 @@ console.log(response)
               outlineColor="#276ef1"
               style={[styles.input, themeTextStyle]}
               theme={{ colors: { text: themeTextStyle } }}
+              textColor={themeTextStyle}
             />
 
             {touched.location && errors.location && (
               <Text style={styles.errorText}>{errors.location}</Text>
             )}
-            <Text style={{ fontSize: 18 }}>Description:</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Description:</Text>
             <TextInput
               name="description"
               mode="outlined"
@@ -270,37 +269,39 @@ console.log(response)
               blurOnSubmit
               style={styles.input}
               theme={{ colors: { text: themeTextStyle } }}
+              textColor={themeTextStyle}
             />
             {touched.description && errors.description && (
               <Text style={styles.errorText}>{errors.description}</Text>
             )}
             {/* Start time selector */}
-            <Text style={{ fontSize: 18 }}>Start Time:</Text>
+            
             <View
-              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+              style={{ flexDirection: "row", justifyContent: "space-between" , alignItems:"center"}}
             >
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>Start Time:</Text>
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 style={styles.button}
-                textColor="#ffffff"
-                labelStyle={buttonTextStyle}
+                textColor="#276EF1"
+                labelStyle={labelTextStyle}
                 onPress={showDatepicker}
               >
                 Select Date
               </Button>
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 style={styles.button}
                 textColor="#ffffff"
-                labelStyle={buttonTextStyle}
+                labelStyle={labelTextStyle}
                 onPress={showTimepicker}
               >
                 Select Time
               </Button>
             </View>
-            <Text style={{ fontWeight: "bold", marginBottom: "5%" }}>
+            <Text style={{ fontWeight: "bold", marginBottom: "5%", fontStyle:"italic", color:"grey" }}>
               Start time selected:{" "}
               <Text style={{ color: "#276ef1" }}>
                 {start_date.toLocaleString()}
@@ -318,32 +319,33 @@ console.log(response)
 
             {/* End time selector */}
 
-            <Text style={{ fontSize: 18 }}>End Time:</Text>
+           
             <View
-              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+              style={{ flexDirection: "row", justifyContent: "space-between" , alignItems:"center"}}
             >
+               <Text style={{ fontSize: 18, fontWeight: "bold",  }}>End Time:</Text>
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 style={styles.button}
                 textColor="#ffffff"
-                labelStyle={buttonTextStyle}
+                labelStyle={labelTextStyle}
                 onPress={showEndDatepicker}
               >
                 Select Date
               </Button>
               <Button
-                mode="contained"
+                mode="outlined"
                 uppercase={false}
                 style={styles.button}
                 textColor="#ffffff"
-                labelStyle={buttonTextStyle}
+                labelStyle={labelTextStyle}
                 onPress={showEndTimepicker}
               >
                 Select Time
               </Button>
             </View>
-            <Text style={{ fontWeight: "bold", marginBottom: "5%" }}>
+            <Text style={{ fontWeight: "bold", marginBottom: "5%", fontStyle:"italic", color:"grey" }}>
               End time selected:{" "}
               <Text style={{ color: "#276ef1" }}>
                 {end_date.toLocaleString()}
@@ -361,7 +363,7 @@ console.log(response)
 
             {/* Priority Select */}
 
-            <Text style={{ fontSize: 18 }}>Task priority:</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Task priority:</Text>
             <View
              
             >
@@ -373,7 +375,9 @@ console.log(response)
           {
             value: 'high',
             label: 'High',
-            style : styles.high
+            style : styles.high,
+            
+            
           },
           {
             value: 'medium',
@@ -391,14 +395,14 @@ console.log(response)
             )}
             {/* Assignee */}
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}> 
-            <Text style={{ fontSize: 18 }}>Assigned To:</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Assigned To:</Text>
             <TouchableOpacity
             
               onPress={() => {
                 setModalVisible(true);
               }}
             >
-              <Text>See Employees</Text>
+              <Text style={{textDecorationLine:"underline", color: "#276ef1"}}>See Employees</Text>
             </TouchableOpacity>
             </View>
 
@@ -442,7 +446,7 @@ console.log(response)
               mode="contained"
               loading={props.isSubmitting}
               uppercase={false}
-              style={styles.button}
+              style={styles.submit}
               disabled={!isValid}
               textColor="#ffffff"
               labelStyle={buttonTextStyle}

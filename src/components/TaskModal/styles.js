@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
       marginTop: 22
     },
     modalView: {
-      margin: 20,
+      marginTop: 70,
+      marginHorizontal:20,
       backgroundColor: "white",
       borderRadius: 20,
       padding: 35,
@@ -23,8 +24,8 @@ const styles = StyleSheet.create({
       elevation: 5
     },
     openButton: {
-      backgroundColor: "#F194FF",
-      borderRadius: 20,
+      backgroundColor: "#276EF1",
+      borderRadius: 10,
       padding: 10,
       elevation: 2
     },
@@ -55,15 +56,17 @@ const styles = StyleSheet.create({
     borderBottomWidth:1
   },
   details: {
-		justifyContent: 'center',
-		alignItems: 'flex-start',
-		padding: 10,
+		paddingVertical: 10,
 	},
   heading: {
 		fontSize: 24,
 		fontWeight: 'bold',
 		paddingVertical: 20,
+    color:"#276EF1"
 	},
+  bold:{
+    fontWeight:"bold"
+  }
 
   });
   export default styles
