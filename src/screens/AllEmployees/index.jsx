@@ -8,13 +8,8 @@ import {
   Alert
 } from "react-native";
 import {
-  DataTable,
-  Avatar,
-  Card,
-  IconButton,
   Divider,
   List,
-  Button,
   ActivityIndicator,
   FAB
 } from "react-native-paper";
@@ -22,7 +17,7 @@ import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-root-toast";
 import styles from "./styles";
-import TaskModal from "../../components/TaskModal";
+import EmployeeDetailModal from "../../components/EmployeeDetailModal";
 
 const AllEmployees = ({ navigation }) => {
   const [token, setToken] = useState();
@@ -247,9 +242,8 @@ const AllEmployees = ({ navigation }) => {
     style={styles.fab}
     onPress={() => navigation.navigate('Add Employee')}
   />
-      <TaskModal
-        employees={employees}
-        tasksData={selectedData}
+      <EmployeeDetailModal
+        employees={selectedData}
         modalVisible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
         onPress={() => setModalVisible(false)}
