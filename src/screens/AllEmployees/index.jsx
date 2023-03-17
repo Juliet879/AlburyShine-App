@@ -18,6 +18,7 @@ import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-root-toast";
 import styles from "./styles";
 import EmployeeDetailModal from "../../components/EmployeeDetailModal";
+import AdminEditEmployee from "../../components/EditEmployeeAdmin";
 
 const AllEmployees = ({ navigation }) => {
   const [token, setToken] = useState();
@@ -27,6 +28,7 @@ const AllEmployees = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedData, setSelectedData] = useState({});
   const [employees, setEmployees] = useState();
+  const [editmodal, setEditModalVisible] = useState(false)
 
   const getEmployees = () => {
     const headers = {
@@ -199,7 +201,9 @@ const AllEmployees = ({ navigation }) => {
               key={item.editId}
               style={{ color: "#333235" }}
               onPress={()=>{
-                deleteConfirm(item.id)
+               setEditModalVisible(true);
+               setSelectedData(item);
+               setSelectedId(item.id);
             }
             }
               >
@@ -247,6 +251,11 @@ const AllEmployees = ({ navigation }) => {
         modalVisible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
         onPress={() => setModalVisible(false)}
+      />
+      <AdminEditEmployee
+      employee={selectedData}
+      modalVisible={editmodal}
+      onPress={() => setEditModalVisible(false)}
       />
     </View>
   );

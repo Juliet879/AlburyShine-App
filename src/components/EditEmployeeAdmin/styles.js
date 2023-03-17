@@ -5,14 +5,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		padding: 20,
-		minHeight: Math.round(Dimensions.get('window').height),
+        backgroundColor: '#ffffff',
+        marginTop: 22
+		// minHeight: Math.round(Dimensions.get('window').height),
 	},
 	image: {
 		alignSelf: 'center',
 		marginBottom:"5%"
 	},
 	input: {
-		backgroundColor: 'transparent',
+		backgroundColor: 'none',
 		marginBottom:"5%",
 		
 	},
@@ -140,6 +142,17 @@ const styles = StyleSheet.create({
         fontWeight:"bold",
         marginVertical:10
     },
+    openButton: {
+        backgroundColor: "#276EF1",
+        borderRadius: 10,
+        padding: 10,
+        elevation: 2
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
 });
 
 export default styles;

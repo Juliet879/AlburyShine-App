@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
 	Text,
 	StatusBar,
@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 // import PasswordReset from './passwordReset';
+import { AuthContext } from '../../AuthProvider';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -36,6 +37,7 @@ const Login = ({ navigation }) => {
 	const [visible, setVisible] = useState(false);
 	const showModal = () => setVisible(true);
 	const hideModal = () => setVisible(false);
+	const {login} = useContext(AuthContext)
 	const colorScheme = useColorScheme();
 	const themeTextStyle =
 		colorScheme === 'light'
@@ -72,11 +74,12 @@ const Login = ({ navigation }) => {
 				.then((response) => response.json())
 				.then(async (response) => {
 					formikActions.setSubmitting(true);
-console.log(response)
+console.log({response})
 					if (response.status === 201) {
 						Toast.show(`Login was successfull`, {
 							duration: Toast.durations.LONG,
 						});
+						login(response)
 
 						await SecureStore.setItemAsync('token', response.token);
 						navigation.navigate('BottomNav');

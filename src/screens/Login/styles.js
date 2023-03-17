@@ -12,7 +12,7 @@ const LoginStyles = StyleSheet.create({
 		marginBottom:"5%"
 	},
 	input: {
-		backgroundColor: 'none',
+		backgroundColor: 'transparent',
 		marginBottom:"5%"
 	},
 	welcome: {

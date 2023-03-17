@@ -6,19 +6,21 @@ import {
   useColorScheme,
   StatusBar,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
+  Modal,
+  TouchableHighlight
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 import * as SecureStore from "expo-secure-store";
-import { TextInput, Button, Modal, Portal , Avatar, Divider, SegmentedButtons} from "react-native-paper";
+import { TextInput, Button, Portal , Avatar, Divider, SegmentedButtons} from "react-native-paper";
 import { API_URL } from "@env";
 import Toast from "react-native-root-toast";
 import styles from "./styles";
 
 
 
-const CreateEmployee = ({ navigation }) => {
+const AdminEditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
 
   const [token, setToken] = useState();
   const [employees, setEmployees] = useState([]);
@@ -27,7 +29,7 @@ const CreateEmployee = ({ navigation }) => {
   const [priority, setPriority] = useState('')
   const [value, setValue] = useState('');
 
-  const [modalVisible, setModalVisible] = useState(false);
+ 
 
   useEffect(() => {
     (async () => {
@@ -43,7 +45,7 @@ const CreateEmployee = ({ navigation }) => {
 
  
 
- 
+ console.log({employee})
 
 
   
@@ -107,16 +109,21 @@ console.log(response)
 	};
  
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar backgroundColor={"#276EF1"} barStyle="light-content" />
-      <Text style={styles.title}>Create Employee</Text>
+    <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+    
+      <Text style={styles.title}>Edit Employee Details</Text>
       <Formik
         validationSchema={employeeValidationSchema}
         initialValues={{
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+          email: employee.email,
+          phoneNumber: employee.phoneNumber,
         }}
         onSubmit={handleSubmit}
       >
@@ -135,7 +142,6 @@ console.log(response)
             <TextInput
               name="firstName"
               mode="outlined"
-              placeholder="Enter first name"
               onChangeText={handleChange("firstName")}
               onBlur={handleBlur("firstName")}
               value={values.firstName}
@@ -154,7 +160,6 @@ console.log(response)
             <TextInput
               name="lastName"
               mode="outlined"
-              placeholder="Enter last name"
               onChangeText={handleChange("lastName")}
               onBlur={handleBlur("lastName")}
               value={values.lastName}
@@ -173,7 +178,6 @@ console.log(response)
             <TextInput
               name="email"
               mode="outlined"
-              placeholder="Enter email address"
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
@@ -191,7 +195,6 @@ console.log(response)
             <TextInput
               name="phoneNumber"
               mode="outlined"
-              placeholder="Enter phone number"
               onChangeText={handleChange("phoneNumber")}
               onBlur={handleBlur("phoneNumber")}
               value={values.phoneNumber}
@@ -224,12 +227,19 @@ console.log(response)
               labelStyle={buttonTextStyle}
               
             >
-              Create Employee
+              Edit Employee
             </Button>
+            <TouchableHighlight
+          style={{ ...styles.openButton, backgroundColor: "#276EF1" }}
+          onPress={onPress}
+        >
+          <Text style={styles.textStyle}>Close</Text>
+        </TouchableHighlight>
           </>
         )}
       </Formik>
-    </ScrollView>
+    </ScrollView>  
+    </Modal>
   );
 };
-export default CreateEmployee;
+export default AdminEditEmployee;
