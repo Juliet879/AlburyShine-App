@@ -20,20 +20,16 @@ import {
 const UserModal =({modalVisible,setModalVisible, employeeData, selectedEmployees})=>{
     const [checkedItems, setCheckedItems] = useState([]);
 
-    const isChecked = (id) => {
-  
-      return checkedItems.includes(id);
-    };
+   
 
     const toggleItem = (id) => {
-      if (isChecked(id) === true) {
+    const index = checkedItems.indexOf(id);
+    if(index === -1){
+      setCheckedItems([...checkedItems,id])
+    }else{
+      setCheckedItems(checkedItems.filter(i=>i !== id))
 
-        setCheckedItems(checkedItems.filter(item => item !== id));
-      
-      } else {
-        setCheckedItems([...checkedItems, id]);
-      }
-      selectedEmployees(checkedItems)
+    }
     };
     return(
         <Modal
@@ -56,7 +52,8 @@ const UserModal =({modalVisible,setModalVisible, employeeData, selectedEmployees
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => toggleItem(item.id)} key={item.id}>
             <View style={styles.container}>
-            <Checkbox.Item status={isChecked(item.id) ? "checked" : "unchecked"} />
+            {/* <Checkbox.Item status={isChecked(item.id) ? "checked" : "unchecked"} /> */}
+            {checkedItems.includes(item.id) && <Text>✓</Text>}
             <Avatar.Icon size={30} icon="account" />
               <Text style={styles.details}>{item.firstName} {item.lastName}</Text>
               <Divider/>
@@ -67,7 +64,10 @@ const UserModal =({modalVisible,setModalVisible, employeeData, selectedEmployees
       />
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={setModalVisible}
+              onPress={()=>{
+                selectedEmployees(checkedItems)
+                setModalVisible()
+              }}
             >
               <Text style={styles.textStyle}>Hide Modal</Text>
             </TouchableHighlight>

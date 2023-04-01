@@ -66,14 +66,14 @@ const AdminEditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
 
   });
   const handleSubmit = (values, formikActions) => {
-		
+		console.log({values});
     const headers = {
       Authorization: "Bearer " + token,
       Accept: "application/json",
       "Content-Type": "application/json",
     };
 		try {
-			fetch(`${API_URL}/employers/create-employee`, {
+			fetch(`${API_URL}/employers/update-employee`, {
 				method: 'POST',
 				headers: headers,
 				body: JSON.stringify(values),
@@ -81,7 +81,7 @@ const AdminEditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
 				.then((response) => response.json())
 				.then(async (response) => {
 					formikActions.setSubmitting(true);
-console.log(response)
+console.log({response})
 					if (response.status === 200) {
 						Toast.show(response.data, {
 							duration: Toast.durations.LONG,
@@ -120,7 +120,7 @@ console.log(response)
       <Formik
         validationSchema={employeeValidationSchema}
         initialValues={{
-          firstName: employee.firstName,
+          firstName: "",
           lastName: employee.lastName,
           email: employee.email,
           phoneNumber: employee.phoneNumber,
@@ -147,6 +147,7 @@ console.log(response)
               value={values.firstName}
               activeOutlineColor="#276ef1"
               blurOnSubmit
+              defaultValue={employee.firstName}
               outlineColor="#276ef1"
               style={[styles.input, themeTextStyle]}
               theme={{ colors: { text: themeTextStyle } }}
@@ -217,7 +218,7 @@ console.log(response)
 
 
             <Button
-            onPress={()=>handleSubmit()}
+            onPress={handleSubmit}
               mode="contained"
               loading={props.isSubmitting}
               uppercase={false}

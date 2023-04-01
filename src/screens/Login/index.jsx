@@ -37,7 +37,7 @@ const Login = ({ navigation }) => {
 	const [visible, setVisible] = useState(false);
 	const showModal = () => setVisible(true);
 	const hideModal = () => setVisible(false);
-	const {login} = useContext(AuthContext)
+	const {user,login} = useContext(AuthContext)
 	const colorScheme = useColorScheme();
 	const themeTextStyle =
 		colorScheme === 'light'
@@ -74,7 +74,7 @@ const Login = ({ navigation }) => {
 				.then((response) => response.json())
 				.then(async (response) => {
 					formikActions.setSubmitting(true);
-console.log({response})
+console.log(response)
 					if (response.status === 201) {
 						Toast.show(`Login was successfull`, {
 							duration: Toast.durations.LONG,
@@ -82,9 +82,10 @@ console.log({response})
 						login(response)
 
 						await SecureStore.setItemAsync('token', response.token);
-						navigation.navigate('BottomNav');
+						await SecureStore.setItemAsync('permissionLevel', response.permissionLevel);
+						response.permissionLevel === 'admin'? navigation.replace('AdminScreens', { screen: 'BottomNav' }):navigation.replace('EmployeeScreens', {screen:"Employee Tasks"}) ;
 					} else {
-						Toast.show(response.error, {
+						Toast.show(response.message, {
 							duration: Toast.durations.LONG,
 						});
 						formikActions.setSubmitting(false);

@@ -14,7 +14,7 @@ import * as SecureStore from "expo-secure-store";
 import { TextInput, Button, Modal, Portal , Avatar, Divider, SegmentedButtons} from "react-native-paper";
 import { API_URL } from "@env";
 import moment from "moment";
-import DatePicker from "react-datepicker";
+
 import Toast from "react-native-root-toast";
 import styles from "./styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -24,7 +24,6 @@ import UserModal from "../../components/EmployeesModal";
 const AddTasks = ({ navigation }) => {
   const [start_date, setStartDate] = useState(new Date());
   const [end_date, setEndDate] = useState(new Date());
-  const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [showEnd, setEndTimeShow] = useState(false);
@@ -34,6 +33,8 @@ const AddTasks = ({ navigation }) => {
   const[selectedEmployee, setSelectedEmployee] = useState([])
   const [priority, setPriority] = useState('')
   const [value, setValue] = useState('');
+  const [breakTime, setBreakTime] = useState(new Date());
+  const [showBreakPicker, setShowBreakPicker] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -95,7 +96,9 @@ const AddTasks = ({ navigation }) => {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setShow(false);
+   
     setStartDate(currentDate);
+
     console.log("mh",start_date.toString())
   };
   const onChangeEndDate = (event, selectedDate) => {
@@ -130,13 +133,21 @@ const AddTasks = ({ navigation }) => {
     showEndTimeMode("time");
   };
 
-  const selectedEmployees = (employee) =>{
-    console.log("employee", employee)
-setSelectedEmployee(employee)
-console.log({selectedEmployee})
-  }
+  const selectedEmployees = (employee) => {
+    console.log("employee", employee);
+  setSelectedEmployee(employee)
+   
+  };
 
+  const onChangeBreak = (event, selectedTime) => {
+    const currentTime = selectedTime || breakTime;
+    setShowBreakPicker(false);
+    setBreakTime(currentTime);
+  };
+  
+  
 
+  console.log({selectedEmployee})
   
 
   const colorScheme = useColorScheme();
@@ -191,7 +202,7 @@ console.log(response)
 						Toast.show(response.message, {
 							duration: Toast.durations.LONG,
 						});
-
+navigation.navigate('BottomNav')
 
 					} else {
 						Toast.show(response.error, {
@@ -211,18 +222,20 @@ console.log(response)
 	};
  
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView  style={styles.container}>
       <StatusBar backgroundColor={"#276EF1"} barStyle="light-content" />
       <Text style={styles.title}>Add Task</Text>
       <Formik
         // validationSchema={tasksValidationSchema}
         initialValues={{
           location: "",
-          startTime: start_date.toString(),
-          endTime: end_date.toString(),
+          startTime: start_date,
+          endTime: end_date,
           description: "",
           priority: "",
-          assigneeId: selectedEmployee,
+          assigneeId: employees,
+          rate:"",
+          breakTime:breakTime,
         }}
         onSubmit={handleSubmit}
       >
@@ -234,8 +247,16 @@ console.log(response)
           errors,
           touched,
           isValid,
+          setFieldValue,
           ...props
-        }) => (
+        }) => {
+          useEffect(() => {
+            setFieldValue('startTime', start_date.toString());
+            setFieldValue('endTime', end_date.toString());
+            setFieldValue('assigneeId',selectedEmployee);
+            setFieldValue('breakTime', breakTime);
+          }, [start_date, setFieldValue,end_date,selectedEmployee,breakTime]);
+          return(
           <>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Location:</Text>
             <TextInput
@@ -303,22 +324,24 @@ console.log(response)
             </View>
             <Text style={{ fontWeight: "bold", marginBottom: "5%", fontStyle:"italic", color:"grey" }}>
               Start time selected:{" "}
-              <Text style={{ color: "#276ef1" }}>
+              <Text style={{ color: "#276ef1" }} >
                 {start_date.toLocaleString()}
               </Text>
             </Text>
             {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={start_date}
-                mode={mode}
-                is24Hour={true}
-                onChange={onChange}
-              />
+           <DateTimePicker
+           testID="dateTimePicker"
+           value={start_date}
+           mode={mode}
+           is24Hour={true}
+           onChange={onChange}
+         />
+         
             )}
+            
 
             {/* End time selector */}
-
+      
            
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" , alignItems:"center"}}
@@ -360,7 +383,51 @@ console.log(response)
                 onChange={onChangeEndDate}
               />
             )}
+            {/* Breaktime */}
+            <View
+              style={{ flexDirection: "row" , alignItems:"center"}}
+            >
+               <Text style={{ fontSize: 18, fontWeight: "bold",  }}>Break Time:</Text>
+            <Button
 
+              mode="outlined"
+              uppercase={false}
+              style={styles.button}
+              textColor="#ffffff"
+              labelStyle={labelTextStyle}
+              onPress={() => setShowBreakPicker(true)}
+            >Select Break Time</Button>
+            {showBreakPicker && (
+              <DateTimePicker
+                testID="breakTimePicker"
+                value={breakTime}
+                mode="time"
+                is24Hour={true}
+                onChange={onChangeBreak}
+              />
+            )}
+            </View>
+            <Text style={{ fontWeight: "bold", marginBottom: "5%", fontStyle:"italic", color:"grey" }}>
+              Break time selected:{" "}
+              <Text style={{ color: "#276ef1" }}>
+                {breakTime.toLocaleString()}
+              </Text>
+            </Text>
+{/* {Hourly rate} */}
+<Text style={{ fontSize: 18, fontWeight: "bold" }}>Hourly Rate:</Text>
+<TextInput
+              value={values.rate}
+              onChangeText={handleChange('rate')}
+              placeholder="Enter hourly rate"
+              keyboardType="numeric"
+              activeOutlineColor="#276ef1"
+              blurOnSubmit
+              outlineColor="#276ef1"
+              mode="outlined"
+              style={[styles.input, themeTextStyle]}
+              theme={{ colors: { text: themeTextStyle } }}
+              textColor={themeTextStyle}
+            />
             {/* Priority Select */}
 
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Task priority:</Text>
@@ -435,10 +502,11 @@ console.log(response)
             
               modalVisible={modalVisible}
               setModalVisible={() => {
-                setModalVisible(!modalVisible);
+                setModalVisible(false);
               }}
+              
              employeeData={employees}
-             selectedEmployees={selectedEmployees}
+             selectedEmployees={employees => selectedEmployees(employees)}
             />
 
             <Button
@@ -454,7 +522,7 @@ console.log(response)
               Add Task
             </Button>
           </>
-        )}
+        )}}
       </Formik>
     </ScrollView>
   );

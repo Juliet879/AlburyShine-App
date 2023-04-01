@@ -69,50 +69,40 @@ const TimeSheet = ()=>{
   }, [itemsPerPage,token]);
 
   return (
+    
   <ScrollView horizontal>
-      <DataTable
-      style={styles.container}
-      >
-      <DataTable.Header>
-        <DataTable.Title>Employee Name</DataTable.Title>
-        <DataTable.Title >Employee Id</DataTable.Title>
-        <DataTable.Title>Task Name</DataTable.Title>
-        <DataTable.Title>Start Time</DataTable.Title>
-        <DataTable.Title>End Time</DataTable.Title>
-        <DataTable.Title numeric>Hours Taken</DataTable.Title>
-        <DataTable.Title>Location</DataTable.Title>
-        <DataTable.Title>Status</DataTable.Title>
-      </DataTable.Header>
+      <View style={styles.container}>
+      {/* Table header */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Employee Id</Text>
+        <Text style={styles.headerText}>Employee Name</Text>
+        <Text style={styles.headerText}>Task Name</Text>
+        <Text style={styles.headerText}>Start Time</Text>
+        <Text style={styles.headerText}>End Time</Text>
+        <Text style={styles.headerText}>Hours Taken</Text>
+        <Text style={styles.headerText}>Location</Text>
+        <Text style={styles.headerText}>Status</Text>
+      </View>
+
+    
 {timesheet.map(item=>
-    <DataTable.Row
-    >
-        <DataTable.Cell >{item.assignee}</DataTable.Cell>
-        <DataTable.Cell style={{flex: 6, overflow:"hidden"}}>{item.assigneeId}</DataTable.Cell>
-        <DataTable.Cell style={{flex: 3}}>{item.taskDesc}</DataTable.Cell>
-        <DataTable.Cell >{item.startTime}</DataTable.Cell>
-        <DataTable.Cell >{item.endTime}</DataTable.Cell>
-        <DataTable.Cell numeric >{item.hours}</DataTable.Cell>
-        <DataTable.Cell >{item.location}</DataTable.Cell>
-        <DataTable.Cell >{item.status}</DataTable.Cell>
-      </DataTable.Row>
+      <View key={item.id} style={styles.row}>
+      <Text style={styles.cell}>{item.assigneeId}</Text>
+      <Text style={styles.cell}>{item.assignee}</Text>
+      <Text style={styles.cell}>{item.startTime}</Text>
+      <Text style={styles.cell}>{item.endTime}</Text>
+      <Text style={styles.cell}>{item.hours}</Text>
+      <Text style={styles.cell}>{item.location}</Text>
+      <Text style={styles.cell}>{item.status}</Text>
+    </View>
     
     )}
       
-
+</View>
    
 
-      <DataTable.Pagination
-        page={page}
-        numberOfPages={3}
-        onPageChange={(page) => setPage(page)}
-        label={`1-${timesheet.length >= 10? '10' : timesheet.length} of ${Math.floor(timesheet.length/10) > 1? Math.floor(timesheet.length/10)  +1 : '1'}`}
-        optionsPerPage={optionsPerPage}
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-        showFastPagination
-        optionsLabel={'Rows per page'}
-      />
-    </DataTable>
+     
+   
   </ScrollView>
   );
 }

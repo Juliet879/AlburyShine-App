@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
   Alert
 } from "react-native";
 import {
@@ -25,7 +24,7 @@ import Toast from "react-native-root-toast";
 import styles from "./styles";
 import TaskModal from "../../components/TaskModal";
 
-const AdminTasks = ({ navigation }) => {
+const EmployeeTasks = ({ navigation }) => {
   const [token, setToken] = useState();
   const [loading, setIsLoading] = useState();
   const [tasks, setTasks] = useState([]);
@@ -45,18 +44,7 @@ const AdminTasks = ({ navigation }) => {
     })
       .then((response) => {
       
-        if (response.status === 403) {
-          Toast.show(`Your session has expired, kindly login and try again`, {
-            duration: Toast.durations.LONG,
-          });
-          SecureStore.deleteItemAsync("token")
-            .then(() => navigation.replace("Login Screen"))
-            .catch((error) =>
-              Toast.show(error.message, {
-                duration: Toast.durations.LONG,
-              })
-            );
-        }
+   
         return response.json();
       })
       .then(async (response) => {
@@ -83,10 +71,11 @@ const AdminTasks = ({ navigation }) => {
       Accept: "application/json",
       "Content-Type": "application/json",
     };
-    fetch(`${API_URL}/employers/all-tasks`, {
+    fetch(`${API_URL}/employees/all-tasks`, {
       headers,
     })
       .then((response) => {
+        
         if (response.status === 403) {
           Toast.show(`Your session has expired, kindly login and try again`, {
             duration: Toast.durations.LONG,
@@ -102,6 +91,7 @@ const AdminTasks = ({ navigation }) => {
         return response.json();
       })
       .then(async (response) => {
+        console.log(response);
         if (response.success === false) {
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
@@ -112,7 +102,19 @@ const AdminTasks = ({ navigation }) => {
         setIsLoading(true);
       })
       .catch((error) => {
-        console.log({ error });
+        console.log({error});
+        // if (response.status === 403) {
+        //     Toast.show(`Your session has expired, kindly login and try again`, {
+        //       duration: Toast.durations.LONG,
+        //     });
+        //     SecureStore.deleteItemAsync("token")
+        //       .then(() => navigation.replace("Login Screen"))
+        //       .catch((error) =>
+        //         Toast.show(error.message, {
+        //           duration: Toast.durations.LONG,
+        //         })
+        //       );
+        //   }
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
       });
   };
@@ -212,7 +214,7 @@ const AdminTasks = ({ navigation }) => {
   }
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
+    <View style={{ flex: 1, padding: 20 }}>
     <Text style={styles.title}>Tasks Overview</Text>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Card.Title
@@ -246,76 +248,41 @@ const AdminTasks = ({ navigation }) => {
       </View>
       <SafeAreaView>
         <Text style={styles.heading}>Tasks</Text>
-        <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.taskId}
-          key={(item) => item.taskId}
-          renderItem={({ item }) => (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <TouchableOpacity
-                key={item.taskId}
-                style={{ width:"62%"}}
-                onPress={() => {
-                  setSelectedId(item.taskId);
-                  setModalVisible(true);
-                  setSelectedData(item);
-                }}
-              >
-                    <List.Item
-                    title={ <Text style={{ color: "#333235"}}>{item.description}</Text>}
-              
-           
-            />
-               
-              </TouchableOpacity>
-              <TouchableOpacity
-              key={item.editId}
-              style={{ color: "#333235" }}
-              onPress={()=>{
-                deleteConfirm(item.taskId)
-            }
-            }
-              >
+       {tasks.length === 0? 
+    <Text>No tasks</Text>  :
+    <FlatList
+    data={tasks}
+    keyExtractor={(item) => item.taskId}
+    key={(item) => item.taskId}
+    renderItem={({ item }) => (
+      <View
+        style={{ flexDirection: "row", justifyContent: "space-between" }}
+      >
+        <TouchableOpacity
+          key={item.taskId}
+          style={{ width:"62%"}}
+          onPress={() => {
+            setSelectedId(item.taskId);
+            setModalVisible(true);
+            setSelectedData(item);
+          }}
+        >
               <List.Item
-              
-              right={() => (
-                <>
-                  <List.Icon icon="pencil" color="#059142" />
-                </>
-              )}
-            />
-              </TouchableOpacity>
-              <TouchableOpacity
-              key={item.id}
-              style={{ color: "#333235" }}
-              onPress={()=>{
-                deleteConfirm(item.taskId)
-            }
-            }
-              >
-              <List.Item
-              
-              right={() => (
-                <>
-                  <List.Icon icon="delete" color="grey" />
-                </>
-              )}
-            />
-              </TouchableOpacity>
-          
-            </View>
-          )}
-        />
+              title={ <Text style={{ color: "#333235"}}>{item.description}</Text>}
+        
+     
+      />
+         
+        </TouchableOpacity>
+       
+    
+      </View>
+    )}
+  />
+    }
  
       </SafeAreaView>
-      <FAB
-    icon="plus"
-    label="Add Task"
-    style={styles.fab}
-    onPress={() => navigation.navigate('Add Tasks')}
-  />
+  
       <TaskModal
         employees={employees}
         tasksData={selectedData}
@@ -323,7 +290,7 @@ const AdminTasks = ({ navigation }) => {
         onRequestClose={() => setModalVisible(false)}
         onPress={() => setModalVisible(false)}
       />
-    </ScrollView>
+    </View>
   );
 };
-export default AdminTasks;
+export default EmployeeTasks;

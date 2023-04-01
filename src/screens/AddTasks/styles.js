@@ -3,9 +3,9 @@ import { StyleSheet, Dimensions } from 'react-native';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
+		// justifyContent: 'center',
 		padding: 20,
-		minHeight: Math.round(Dimensions.get('window').height),
+		// minHeight: Math.round(Dimensions.get('window').height),
 	},
 	image: {
 		alignSelf: 'center',
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		padding: 10,
 		flexWrap:"wrap",
+		marginBottom:30
 		
 
 		// justifyContent:"space-between"

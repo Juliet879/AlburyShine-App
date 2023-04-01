@@ -7,7 +7,7 @@ const ProtectedRoute = ({ component: Component, userRole, requiredRoles, ...rest
   if (userHasAccess) {
     return <Component {...rest} />;
   } else {
-    return <Redirect to="/unauthorized" />;
+    return <Redirect to="/Unauthorized" />;
   }
 };
 
