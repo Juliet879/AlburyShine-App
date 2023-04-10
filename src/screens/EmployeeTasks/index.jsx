@@ -5,24 +5,51 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Alert
+  ScrollView,
+  Alert,
+  Platform,
 } from "react-native";
 import {
-  DataTable,
   Avatar,
   Card,
-  IconButton,
   Divider,
   List,
   Button,
   ActivityIndicator,
-  FAB
+  Chip,
 } from "react-native-paper";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-root-toast";
 import styles from "./styles";
 import TaskModal from "../../components/TaskModal";
+import * as Location from "expo-location";
+import { reverseGeocode } from "../../../libraries";
+
+const getColorBasedOnText = (text) => {
+  // Replace this with your own logic to determine color based on text
+  if (text.includes("Completed")) {
+    return "green";
+  } else if (text.includes("Not started")) {
+    return "red";
+  } else {
+    return "orange";
+  }
+};
+//   Getting the chip colors
+export const TextBasedColorChip = ({ text }) => {
+  const chipColor = getColorBasedOnText(text);
+
+  return (
+    <Chip
+      style={{ backgroundColor: "transparent" }}
+      textStyle={{ color: chipColor }}
+      mode="outlined"
+    >
+      {text}
+    </Chip>
+  );
+};
 
 const EmployeeTasks = ({ navigation }) => {
   const [token, setToken] = useState();
@@ -32,6 +59,30 @@ const EmployeeTasks = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedData, setSelectedData] = useState({});
   const [employees, setEmployees] = useState();
+  const [employeeId, setEmployeeId] = useState();
+  const [location, setLocation] = useState();
+
+  const getLocation = async () => {
+    try {
+      // Request location permissions
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        alert(
+          "Permission to access location was denied. You need to allow for location to be able to start a task"
+        );
+        return;
+      }
+
+      // Get the user's current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      const formattedAddress = await reverseGeocode(latitude, longitude);
+      setLocation(formattedAddress);
+    } catch (error) {
+      Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
+    }
+  };
 
   const getEmployees = () => {
     const headers = {
@@ -43,24 +94,20 @@ const EmployeeTasks = ({ navigation }) => {
       headers,
     })
       .then((response) => {
-      
-   
         return response.json();
       })
       .then(async (response) => {
         if (response.success === false) {
-          console.log({ response });
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
           });
         }
-      
+
         setEmployees(response.data);
         // response.data ? setEmployees(response.data) : setEmployees([]);
         setIsLoading(true);
       })
       .catch((error) => {
-        console.log({ error });
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
       });
   };
@@ -75,7 +122,6 @@ const EmployeeTasks = ({ navigation }) => {
       headers,
     })
       .then((response) => {
-        
         if (response.status === 403) {
           Toast.show(`Your session has expired, kindly login and try again`, {
             duration: Toast.durations.LONG,
@@ -91,30 +137,16 @@ const EmployeeTasks = ({ navigation }) => {
         return response.json();
       })
       .then(async (response) => {
-        console.log(response);
         if (response.success === false) {
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
           });
         }
-       
+
         setTasks(response.data);
         setIsLoading(true);
       })
       .catch((error) => {
-        console.log({error});
-        // if (response.status === 403) {
-        //     Toast.show(`Your session has expired, kindly login and try again`, {
-        //       duration: Toast.durations.LONG,
-        //     });
-        //     SecureStore.deleteItemAsync("token")
-        //       .then(() => navigation.replace("Login Screen"))
-        //       .catch((error) =>
-        //         Toast.show(error.message, {
-        //           duration: Toast.durations.LONG,
-        //         })
-        //       );
-        //   }
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
       });
   };
@@ -123,6 +155,8 @@ const EmployeeTasks = ({ navigation }) => {
     (async () => {
       const item = await SecureStore.getItemAsync("token");
       setToken(item);
+      const id = await SecureStore.getItemAsync("id");
+      setEmployeeId(id);
     })();
 
     if (token !== null && token !== undefined) {
@@ -131,17 +165,19 @@ const EmployeeTasks = ({ navigation }) => {
     }
   }, [token]);
 
-
-
-  const handleSubmit = (id) => {
-   
+  const handleStartTask = async (id) => {
+    //    const getLocation = await getLocation()
+    //    console.log(getLocation);
     const values = {
       taskId: id,
+      assigneeId: employeeId,
+      location: location,
+      startTime: new Date(),
     };
-    console.log(JSON.stringify(values))
-    console.log({token})
-    fetch(`${API_URL}/employers/delete-task`, {
-      method: "DELETE",
+    console.log(JSON.stringify(values));
+
+    fetch(`${API_URL}/employees/start-task`, {
+      method: "POST",
       headers: {
         Authorization: "Bearer " + token,
         Accept: "application/json",
@@ -149,15 +185,13 @@ const EmployeeTasks = ({ navigation }) => {
       },
       body: JSON.stringify(values),
     })
-      .then((response) =>response.json())
+      .then((response) => response.json())
       .then(async (response) => {
         console.log(response);
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
           });
-          const newTasks= tasks.filter (item=> item.taskId !== id)
-         return setTasks(newTasks)
         } else {
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
@@ -165,58 +199,128 @@ const EmployeeTasks = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         Toast.show(error.message, { duration: Toast.durations.LONG });
       });
   };
 
-  const deleteConfirm = (id) => {
-    console.log({id})
-    //function to make two option alert
-    Alert.alert(
-      //title
-      'Delete task?',
-      //body
-      'Are you sure you want to delete this task ?',
-      [
-        { text: 'Yes', onPress: () => handleSubmit(id) },
-        {
-          text: 'No',
-          onPress: () =>  Toast.show('Task deleting canceled', {
+  const handleEndTask = async (id) => {
+    const values = {
+      taskId: id,
+      assigneeId: employeeId,
+      location: location,
+      endTime: new Date(),
+    };
+    console.log(JSON.stringify(values));
+
+    fetch(`${API_URL}/employees/end-task`, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => response.json())
+      .then(async (response) => {
+        console.log(response);
+        if (response.status === 200) {
+          Toast.show(response.message, {
             duration: Toast.durations.LONG,
-          }),
-          style: 'cancel',
-        },
-      ],
-      { cancelable: false }
-      //clicking out side of alert will not cancel
+          });
+        } else {
+          Toast.show(response.error, {
+            duration: Toast.durations.LONG,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        Toast.show(error.message, { duration: Toast.durations.LONG });
+      });
+  };
+  const getColorBasedOnTask = (text) => {
+    // Replace this with your own logic to determine color based on text
+    if (text.includes("Start task")) {
+      return "red";
+    } else if (text.includes("End task")) {
+      return "green";
+    } else {
+      return "orange";
+    }
+  };
+
+  const TextTaskBasedColorChip = ({ text, id, getLocation }) => {
+    console.log({ text });
+    getLocation();
+    if (text === "Not started") {
+      text = "Start task";
+    } else if (text === "In progress") {
+      text = "End task";
+    } else {
+      text = "Success";
+    }
+    const chipColor = getColorBasedOnTask(text);
+    const onPressFunction = () => {
+      if (chipColor === "red") {
+        handleStartTask(id);
+      } else if (chipColor === "green") {
+        handleEndTask(id);
+      }
+    };
+
+    return (
+      <Chip
+        style={{ backgroundColor: chipColor }}
+        textStyle={{ color: "#ffffff" }}
+        onPress={onPressFunction}
+      >
+        {text}
+      </Chip>
     );
   };
 
   const completedTasks = () => {
-    return tasks.filter((item) => item.completed === true);
+    return tasks.filter((item) => item.status === "Completed");
   };
 
-  const completed = tasks.length > 1 ? completedTasks() : null;
-  console.log({ completed });
+  const completed = tasks.length >= 1 ? completedTasks() : null;
+
   const inCompleteTasks = () => {
-    return tasks.filter((item) => item.completed !== true);
+    return tasks.filter((item) => item.status === "Not started");
   };
 
-  const inComplete = tasks.length > 1 ? inCompleteTasks() : null;
-  if(loading !== true){
-  return (
-    <>
-     <ActivityIndicator animating={true} color="#276EF1" size="large" style={styles.activity}/>
-     <Text style={styles.activityText}>Loading ...</Text>
-    </>
-  )
+  const inProgressTaks = () => {
+    return tasks.filter((item) => item.status === "In progress");
+  };
+  const inProgress = tasks.length >= 1 ? inProgressTaks() : null;
+
+  const inComplete = tasks.length >= 1 ? inCompleteTasks() : null;
+  if (loading !== true) {
+    return (
+      <>
+        <ActivityIndicator
+          animating={true}
+          color="#276EF1"
+          size="large"
+          style={styles.activity}
+        />
+        <Text style={styles.activityText}>Loading ...</Text>
+      </>
+    );
   }
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-    <Text style={styles.title}>Tasks Overview</Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <Text style={styles.title}>Tasks Overview</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
         <Card.Title
           style={styles.completed}
           title={
@@ -235,7 +339,7 @@ const EmployeeTasks = ({ navigation }) => {
           style={styles.incomplete}
           title={
             <Text style={styles.cards}>
-              {Array.isArray(inComplete) && inComplete.length > 1
+              {Array.isArray(inComplete) && inComplete.length >= 1
                 ? inComplete.length
                 : 0}
             </Text>
@@ -245,44 +349,86 @@ const EmployeeTasks = ({ navigation }) => {
             <Avatar.Icon {...props} icon="folder" style={styles.icons} />
           )}
         />
+        <Card.Title
+          style={styles.inprogress}
+          title={
+            <Text style={styles.cards}>
+              {Array.isArray(inProgress) && inProgress.length >= 1
+                ? inProgress.length
+                : 0}
+            </Text>
+          }
+          subtitle={<Text style={styles.cardSub}>InProgress </Text>}
+          left={(props) => (
+            <Avatar.Icon {...props} icon="folder" style={styles.icons} />
+          )}
+        />
       </View>
-      <SafeAreaView>
-        <Text style={styles.heading}>Tasks</Text>
-       {tasks.length === 0? 
-    <Text>No tasks</Text>  :
-    <FlatList
-    data={tasks}
-    keyExtractor={(item) => item.taskId}
-    key={(item) => item.taskId}
-    renderItem={({ item }) => (
-      <View
-        style={{ flexDirection: "row", justifyContent: "space-between" }}
-      >
-        <TouchableOpacity
-          key={item.taskId}
-          style={{ width:"62%"}}
-          onPress={() => {
-            setSelectedId(item.taskId);
-            setModalVisible(true);
-            setSelectedData(item);
-          }}
-        >
-              <List.Item
-              title={ <Text style={{ color: "#333235"}}>{item.description}</Text>}
-        
-     
-      />
-         
-        </TouchableOpacity>
-       
-    
-      </View>
-    )}
-  />
-    }
- 
-      </SafeAreaView>
-  
+      <ScrollView>
+        <SafeAreaView>
+          <Text style={styles.heading}>Tasks</Text>
+          {tasks.length === 0 ? (
+            <Text>No tasks</Text>
+          ) : (
+            <FlatList
+              data={tasks}
+              keyExtractor={(item) => item.taskId}
+              key={(item) => item.id}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <TouchableOpacity
+                    key={item.taskId}
+                    style={{ width: "40%" }}
+                    onPress={() => {
+                      setSelectedId(item.taskId);
+                      setModalVisible(true);
+                      setSelectedData(item);
+                    }}
+                  >
+                    <List.Item
+                      title={
+                        <Text style={{ color: "#333235" }}>
+                          {item.description}
+                        </Text>
+                      }
+                    />
+                  </TouchableOpacity>
+
+                  <List.Item
+                    right={() => (
+                      <>
+                        <TextBasedColorChip text={item.status} />
+                      </>
+                    )}
+                  />
+
+                  <List.Item
+                    right={() => (
+                      <>
+                        <TextTaskBasedColorChip
+                          text={
+                            item.status && item.status !== "Completed"
+                              ? item.status
+                              : null
+                          }
+                          id={item.id}
+                          getLocation={getLocation}
+                        />
+                      </>
+                    )}
+                  />
+                </View>
+              )}
+            />
+          )}
+        </SafeAreaView>
+      </ScrollView>
+
       <TaskModal
         employees={employees}
         tasksData={selectedData}

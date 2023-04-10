@@ -9,7 +9,7 @@ import ProfileDrawer from "../EmployeeProfile";
 const ProtectedStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const EmployeeScreens = () => {
+export const EmployeeScreens = () => {
   return (
     <ProtectedStack.Navigator
     initialRouteName="Employee Tasks"
@@ -17,8 +17,8 @@ const EmployeeScreens = () => {
         // headerShown:false,
         headerLeft: () => (
           <TouchableOpacity
-            style={{ marginLeft: 15, borderWidth:1 }}
-            onPress={() => navigation.toggleDrawer()}
+            style={{ marginLeft: 15 }}
+            onPress={() => navigation.openDrawer()}
           >
             <MaterialIcons name="menu" size={24} />
           </TouchableOpacity>
@@ -30,13 +30,14 @@ const EmployeeScreens = () => {
     </ProtectedStack.Navigator>
   );
 };
-export default EmployeeScreens;
+
 
 const DrawerNavigator = () => {
     return (
       <Drawer.Navigator drawerContent={(props) => <ProfileDrawer {...props} />}>
-         {/* <Drawer.Screen name="EmployeeScreens" component={EmployeeScreens} /> */}
+         <Drawer.Screen name="Employee" component={EmployeeScreens} options={{ headerShown: false }}/>
   
       </Drawer.Navigator>
     );
   };
+export default DrawerNavigator;

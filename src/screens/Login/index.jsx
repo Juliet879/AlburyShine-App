@@ -82,6 +82,7 @@ console.log(response)
 						login(response)
 
 						await SecureStore.setItemAsync('token', response.token);
+						await SecureStore.setItemAsync('id',response.userId);
 						await SecureStore.setItemAsync('permissionLevel', response.permissionLevel);
 						response.permissionLevel === 'admin'? navigation.replace('AdminScreens', { screen: 'BottomNav' }):navigation.replace('EmployeeScreens', {screen:"Employee Tasks"}) ;
 					} else {

@@ -23,6 +23,12 @@ const styles = StyleSheet.create({
         width:"45%",
         borderRadius:5
     },
+    inprogress:{
+        backgroundColor:"orange",
+        width:"45%",
+        borderRadius:5,
+        marginVertical:5
+    },
     title:{
         color:"#000000",
         fontSize:18,
@@ -61,6 +67,9 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor:"#276EF1",
       },
+      chipStatus:{
+        backgroundColor:"transparent"
+      }
 
 
       

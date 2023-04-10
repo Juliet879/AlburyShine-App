@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { Modal, Text, TouchableHighlight, View } from "react-native";
 import styles from "./styles";
 
@@ -7,31 +7,28 @@ const TaskModal = ({ modalVisible, onPress, tasksData, employees }) => {
   // console.log({tasksData})
   // console.log({employees})
   
-  const getName = ()=>{
-    if(Array.isArray(tasksData.assigneeId) && Array.isArray(employees)){
-    return  employees.map(item=>
-        
-        tasksData.assigneeId.map(item2=>
-       {   if(item.id === item2){
-        // console.log({item})
-        setEmployeeName(...employeeName, [`${item.firstName} ${item.lastName}`])
-
-          }}
-          ))
-
+  const getName = () => {
+    if (Array.isArray(tasksData.assigneeId) && Array.isArray(employees)) {
+      const matchedNames = [];
+  
+      employees.forEach((employee) => {
+        if (tasksData.assigneeId.includes(employee.id)) {
+          matchedNames.push(`${employee.firstName} ${employee.lastName}`);
+        }
+      });
+  
+      setEmployeeName(matchedNames);
+    } else if (Array.isArray(employees)) {
+      const matchedEmployee = employees.find(
+        (employee) => employee.id === tasksData.assigneeId
+      );
+  
+      if (matchedEmployee) {
+        setEmployeeName(`${matchedEmployee.firstName} ${matchedEmployee.lastName}`);
+      }
     }
-    if(Array.isArray(employees)){
-      return  employees.map(item=>
-        {if(item.id === tasksData.assigneeId){
-          // console.log("hey",{item})
-  setEmployeeName(`${item.firstName} ${item.lastName}`)
-        }}
-        
-        )
-
-    }
-
-  }
+  };
+  
 
 
   return (
@@ -51,7 +48,7 @@ const TaskModal = ({ modalVisible, onPress, tasksData, employees }) => {
             <Text style={styles.details}><Text style={styles.bold}>Location: </Text>{tasksData.location}</Text>
             <Text style={styles.details}><Text style={styles.bold}>StartTime: </Text> {tasksData.startTime}</Text>
             <Text style={styles.details}><Text style={styles.bold}>EndTime:</Text> {tasksData.endTime}</Text>
-            <Text style={styles.details}><Text style={styles.bold}>Completed:</Text> {tasksData.completed? tasksData.completed:"No data"}</Text>
+            <Text style={styles.details}><Text style={styles.bold}>Completed:</Text> {tasksData.status? tasksData.status:"No data"}</Text>
             </>
          
         <TouchableHighlight

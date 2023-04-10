@@ -12,6 +12,7 @@ import AdminScreens from '../ProtectedScreens';
 import UnauthorizedScreen from '../../screens/Unauthorized';
 import EmployeeScreens from '../EmployeeScreens';
 import * as SecureStore from 'expo-secure-store';
+import DrawerNavigator from '../EmployeeScreens';
 
 const Stack = createStackNavigator();
 const Layout = ()=>{
@@ -72,7 +73,7 @@ const Layout = ()=>{
        
         {role === 'admin'? 
         <Stack.Screen name="AdminScreens" component={AdminScreens}/>: 
-        <Stack.Screen name="EmployeeScreens" component={EmployeeScreens}/>
+        <Stack.Screen name="EmployeeScreens" component={DrawerNavigator}/>
     }
        {/* {user?.permissionLevel === 'employee'? 
         <Stack.Screen name="EmployeeScreens" component={EmployeeScreens}/>
