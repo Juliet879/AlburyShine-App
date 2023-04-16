@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import {
   DataTable,
@@ -17,7 +17,7 @@ import {
   List,
   Button,
   ActivityIndicator,
-  FAB
+  FAB,
 } from "react-native-paper";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
@@ -44,7 +44,6 @@ const AdminTasks = ({ navigation }) => {
       headers,
     })
       .then((response) => {
-      
         if (response.status === 403) {
           Toast.show(`Your session has expired, kindly login and try again`, {
             duration: Toast.durations.LONG,
@@ -66,7 +65,7 @@ const AdminTasks = ({ navigation }) => {
             duration: Toast.durations.LONG,
           });
         }
-      
+
         setEmployees(response.data);
         // response.data ? setEmployees(response.data) : setEmployees([]);
         setIsLoading(true);
@@ -107,7 +106,7 @@ const AdminTasks = ({ navigation }) => {
             duration: Toast.durations.LONG,
           });
         }
-       
+
         setTasks(response.data);
         setIsLoading(true);
       })
@@ -129,15 +128,12 @@ const AdminTasks = ({ navigation }) => {
     }
   }, [token]);
 
-
-
   const handleSubmit = (id) => {
-   
     const values = {
       taskId: id,
     };
-    console.log(JSON.stringify(values))
-    console.log({token})
+    console.log(JSON.stringify(values));
+    console.log({ token });
     fetch(`${API_URL}/employers/delete-task`, {
       method: "DELETE",
       headers: {
@@ -147,15 +143,15 @@ const AdminTasks = ({ navigation }) => {
       },
       body: JSON.stringify(values),
     })
-      .then((response) =>response.json())
+      .then((response) => response.json())
       .then(async (response) => {
         console.log(response);
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
           });
-          const newTasks= tasks.filter (item=> item.taskId !== id)
-         return setTasks(newTasks)
+          const newTasks = tasks.filter((item) => item.taskId !== id);
+          return setTasks(newTasks);
         } else {
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
@@ -163,27 +159,28 @@ const AdminTasks = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         Toast.show(error.message, { duration: Toast.durations.LONG });
       });
   };
 
   const deleteConfirm = (id) => {
-    console.log({id})
+    console.log({ id });
     //function to make two option alert
     Alert.alert(
       //title
-      'Delete task?',
+      "Delete task?",
       //body
-      'Are you sure you want to delete this task ?',
+      "Are you sure you want to delete this task ?",
       [
-        { text: 'Yes', onPress: () => handleSubmit(id) },
+        { text: "Yes", onPress: () => handleSubmit(id) },
         {
-          text: 'No',
-          onPress: () =>  Toast.show('Task deleting canceled', {
-            duration: Toast.durations.LONG,
-          }),
-          style: 'cancel',
+          text: "No",
+          onPress: () =>
+            Toast.show("Task deleting canceled", {
+              duration: Toast.durations.LONG,
+            }),
+          style: "cancel",
         },
       ],
       { cancelable: false }
@@ -202,18 +199,23 @@ const AdminTasks = ({ navigation }) => {
   };
 
   const inComplete = tasks.length > 1 ? inCompleteTasks() : null;
-  if(loading !== true){
-  return (
-    <>
-     <ActivityIndicator animating={true} color="#276EF1" size="large" style={styles.activity}/>
-     <Text style={styles.activityText}>Loading ...</Text>
-    </>
-  )
+  if (loading !== true) {
+    return (
+      <>
+        <ActivityIndicator
+          animating={true}
+          color="#276EF1"
+          size="large"
+          style={styles.activity}
+        />
+        <Text style={styles.activityText}>Loading ...</Text>
+      </>
+    );
   }
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
-    <Text style={styles.title}>Tasks Overview</Text>
+    <View style={{ flex: 1, padding: 20 }}>
+      <Text style={styles.title}>Tasks Overview</Text>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Card.Title
           style={styles.completed}
@@ -244,78 +246,79 @@ const AdminTasks = ({ navigation }) => {
           )}
         />
       </View>
-      <SafeAreaView>
-        <Text style={styles.heading}>Tasks</Text>
-        <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.taskId}
-          key={(item) => item.taskId}
-          renderItem={({ item }) => (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <TouchableOpacity
-                key={item.taskId}
-                style={{ width:"62%"}}
-                onPress={() => {
-                  setSelectedId(item.taskId);
-                  setModalVisible(true);
-                  setSelectedData(item);
+      <Text style={styles.heading}>Tasks</Text>
+      <ScrollView>
+        <SafeAreaView>
+          <FlatList
+            data={tasks}
+            keyExtractor={(item) => item.taskId}
+            key={(item) => item.taskId}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                    <List.Item
-                    title={ <Text style={{ color: "#333235"}}>{item.description}</Text>}
-              
-           
-            />
-               
-              </TouchableOpacity>
-              <TouchableOpacity
-              key={item.editId}
-              style={{ color: "#333235" }}
-              onPress={()=>{
-                deleteConfirm(item.taskId)
-            }
-            }
-              >
-              <List.Item
-              
-              right={() => (
-                <>
-                  <List.Icon icon="pencil" color="#059142" />
-                </>
-              )}
-            />
-              </TouchableOpacity>
-              <TouchableOpacity
-              key={item.id}
-              style={{ color: "#333235" }}
-              onPress={()=>{
-                deleteConfirm(item.taskId)
-            }
-            }
-              >
-              <List.Item
-              
-              right={() => (
-                <>
-                  <List.Icon icon="delete" color="grey" />
-                </>
-              )}
-            />
-              </TouchableOpacity>
-          
-            </View>
-          )}
-        />
- 
-      </SafeAreaView>
+                <TouchableOpacity
+                  key={item.taskId}
+                  style={{ width: "62%" }}
+                  onPress={() => {
+                    setSelectedId(item.taskId);
+                    setModalVisible(true);
+                    setSelectedData(item);
+                  }}
+                >
+                  <List.Item
+                    title={
+                      <Text style={{ color: "#333235" }}>
+                        {item.description}
+                      </Text>
+                    }
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  key={item.editId}
+                  style={{ color: "#333235" }}
+                  //   onPress={()=>{
+                  //     deleteConfirm(item.taskId)
+                  // }
+                  // }
+                >
+                  <List.Item
+                    right={() => (
+                      <>
+                        <List.Icon icon="pencil" color="#059142" />
+                      </>
+                    )}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  key={item.id}
+                  style={{ color: "#333235" }}
+                  onPress={() => {
+                    deleteConfirm(item.taskId);
+                  }}
+                >
+                  <List.Item
+                    right={() => (
+                      <>
+                        <List.Icon icon="delete" color="grey" />
+                      </>
+                    )}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </SafeAreaView>
+      </ScrollView>
       <FAB
-    icon="plus"
-    label="Add Task"
-    style={styles.fab}
-    onPress={() => navigation.navigate('Add Tasks')}
-  />
+        icon="plus"
+        label="Add Task"
+        style={styles.fab}
+        onPress={() => navigation.navigate("Add Tasks")}
+      />
       <TaskModal
         employees={employees}
         tasksData={selectedData}
@@ -323,7 +326,7 @@ const AdminTasks = ({ navigation }) => {
         onRequestClose={() => setModalVisible(false)}
         onPress={() => setModalVisible(false)}
       />
-    </ScrollView>
+    </View>
   );
 };
 export default AdminTasks;

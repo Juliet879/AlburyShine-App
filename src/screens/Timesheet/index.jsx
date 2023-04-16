@@ -74,9 +74,7 @@ const TimeSheet = ()=>{
       <View style={styles.container}>
       {/* Table header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Employee Id</Text>
         <Text style={styles.headerText}>Employee Name</Text>
-        <Text style={styles.headerText}>Task Name</Text>
         <Text style={styles.headerText}>Start Time</Text>
         <Text style={styles.headerText}>End Time</Text>
         <Text style={styles.headerText}>Hours Taken</Text>
@@ -84,19 +82,19 @@ const TimeSheet = ()=>{
         <Text style={styles.headerText}>Status</Text>
       </View>
 
-    
+    <ScrollView>
 {timesheet.map(item=>
       <View key={item.id} style={styles.row}>
-      <Text style={styles.cell}>{item.assigneeId}</Text>
       <Text style={styles.cell}>{item.assignee}</Text>
-      <Text style={styles.cell}>{item.startTime}</Text>
-      <Text style={styles.cell}>{item.endTime}</Text>
+      <Text style={styles.cell}>{new Date(item.startTime).toLocaleString()}</Text>
+      <Text style={styles.cell}>{new Date(item.endTime).toLocaleString()}</Text>
       <Text style={styles.cell}>{item.hours}</Text>
       <Text style={styles.cell}>{item.location}</Text>
       <Text style={styles.cell}>{item.status}</Text>
     </View>
     
     )}
+    </ScrollView>
       
 </View>
    

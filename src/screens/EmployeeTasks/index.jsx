@@ -61,6 +61,7 @@ const EmployeeTasks = ({ navigation }) => {
   const [employees, setEmployees] = useState();
   const [employeeId, setEmployeeId] = useState();
   const [location, setLocation] = useState();
+  const [refresh, setRefresh] = useState(false);
 
   const getLocation = async () => {
     try {
@@ -163,18 +164,17 @@ const EmployeeTasks = ({ navigation }) => {
       getTasks();
       getEmployees();
     }
-  }, [token]);
+  }, [token,refresh]);
 
   const handleStartTask = async (id) => {
-    //    const getLocation = await getLocation()
-    //    console.log(getLocation);
+
+    getLocation();
     const values = {
       taskId: id,
       assigneeId: employeeId,
       location: location,
       startTime: new Date(),
     };
-    console.log(JSON.stringify(values));
 
     fetch(`${API_URL}/employees/start-task`, {
       method: "POST",
@@ -187,7 +187,6 @@ const EmployeeTasks = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then(async (response) => {
-        console.log(response);
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
@@ -199,19 +198,18 @@ const EmployeeTasks = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
         Toast.show(error.message, { duration: Toast.durations.LONG });
       });
   };
 
   const handleEndTask = async (id) => {
+    getLocation();
     const values = {
       taskId: id,
       assigneeId: employeeId,
       location: location,
       endTime: new Date(),
     };
-    console.log(JSON.stringify(values));
 
     fetch(`${API_URL}/employees/end-task`, {
       method: "POST",
@@ -224,7 +222,6 @@ const EmployeeTasks = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then(async (response) => {
-        console.log(response);
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
@@ -236,7 +233,6 @@ const EmployeeTasks = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
         Toast.show(error.message, { duration: Toast.durations.LONG });
       });
   };
@@ -252,8 +248,6 @@ const EmployeeTasks = ({ navigation }) => {
   };
 
   const TextTaskBasedColorChip = ({ text, id, getLocation }) => {
-    console.log({ text });
-    getLocation();
     if (text === "Not started") {
       text = "Start task";
     } else if (text === "In progress") {
@@ -264,12 +258,13 @@ const EmployeeTasks = ({ navigation }) => {
     const chipColor = getColorBasedOnTask(text);
     const onPressFunction = () => {
       if (chipColor === "red") {
-        handleStartTask(id);
+        handleStartTask(id, getLocation);
       } else if (chipColor === "green") {
-        handleEndTask(id);
+        handleEndTask(id, getLocation);
       }
+        setRefresh(!refresh);
     };
-
+  
     return (
       <Chip
         style={{ backgroundColor: chipColor }}
@@ -286,7 +281,6 @@ const EmployeeTasks = ({ navigation }) => {
   };
 
   const completed = tasks.length >= 1 ? completedTasks() : null;
-
   const inCompleteTasks = () => {
     return tasks.filter((item) => item.status === "Not started");
   };
@@ -325,7 +319,7 @@ const EmployeeTasks = ({ navigation }) => {
           style={styles.completed}
           title={
             <Text style={styles.cards}>
-              {Array.isArray(completed) && completed.length > 1
+              {Array.isArray(completed) && completed.length >= 1
                 ? completed.length
                 : 0}
             </Text>

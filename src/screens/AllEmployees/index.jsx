@@ -169,8 +169,8 @@ const AllEmployees = ({ navigation }) => {
         {/* <Text style={styles.heading}>Tasks</Text> */}
         <FlatList
           data={employees}
-          keyExtractor={(item) => item.id}
-          key={(item) => item.id}
+          // keyExtractor={(item) => item.id}
+          // key={(item) => item.id}
           renderItem={({ item }) => (
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -240,6 +240,12 @@ const AllEmployees = ({ navigation }) => {
 
       </SafeAreaView>
       <Divider/>
+      <FAB
+    icon="message-plus"
+    label="Chat"
+    style={styles.chat}
+    onPress={() => navigation.navigate('Channel List')}
+  />
       <FAB
     icon="account-plus"
     label="Add Employee"

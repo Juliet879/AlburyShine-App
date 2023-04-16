@@ -15,6 +15,10 @@ const LoginStyles = StyleSheet.create({
 		backgroundColor: 'transparent',
 		marginBottom:"5%"
 	},
+	icon: {
+		backgroundColor: 'red',
+		
+	},
 	welcome: {
 		color: '#124AA1',
 		fontSize: 25,

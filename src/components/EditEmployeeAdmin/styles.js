@@ -3,11 +3,10 @@ import { StyleSheet, Dimensions } from 'react-native';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
 		padding: 20,
         backgroundColor: '#ffffff',
-        marginTop: 22
-		// minHeight: Math.round(Dimensions.get('window').height),
+        // marginTop: 22
+		minHeight: Math.round(Dimensions.get('window').height),
 	},
 	image: {
 		alignSelf: 'center',
@@ -145,14 +144,26 @@ const styles = StyleSheet.create({
     openButton: {
         backgroundColor: "#276EF1",
         borderRadius: 10,
+		textAlign:"center",
         padding: 10,
-        elevation: 2
+        elevation: 2,
+		width:"30%",
+		justifyContent: 'center',
+		alignItems: 'center',
       },
       textStyle: {
         color: "white",
         fontWeight: "bold",
         textAlign: "center"
       },
+	  avatar: {
+		alignSelf: "center",
+		marginTop: 20,
+		marginBottom: 20,
+	  },
+	  edit:{
+		backgroundColor:"#124aa1"
+	  }
 });
 
 export default styles;

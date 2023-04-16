@@ -61,6 +61,13 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor:"#276EF1",
       },
+      chat: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 60,
+        backgroundColor:"#276EF1",
+      },
 
 
       

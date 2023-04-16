@@ -1,5 +1,5 @@
 
-import { MAPS_API_KEY } from '@env';
+import { MAPS_API_KEY,API_URL } from '@env';
 import axios from 'axios';
 
  export const reverseGeocode = async (latitude, longitude) => {
@@ -20,4 +20,27 @@ import axios from 'axios';
       return 'Error fetching address';
     }
   };
+
+  export const getToken = async(userId) =>{
+    try {
+      const response = await fetch(`${API_URL}/getTokens/tokens`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to get token");
+      }
+  
+      const data = await response.json();
+      return data.token;
+    } catch (error) {
+      console.error("Error getting token:", error);
+      throw error;
+    }
+  }
+  
   

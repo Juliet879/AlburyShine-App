@@ -12,7 +12,7 @@ import { AuthContext } from '../../AuthProvider';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, IconButton } from 'react-native-paper';
 import Toast from 'react-native-root-toast';
 import LoginImage from "../../assets/images/login.svg";
 import LoginStyles from './styles';
@@ -35,8 +35,9 @@ const loginValidationSchema = yup.object().shape({
 const Login = ({ navigation }) => {
 	const [scanned, setScanned] = useState(false);
 	const [visible, setVisible] = useState(false);
-	const showModal = () => setVisible(true);
-	const hideModal = () => setVisible(false);
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
 	const {user,login} = useContext(AuthContext)
 	const colorScheme = useColorScheme();
 	const themeTextStyle =
@@ -82,11 +83,16 @@ console.log(response)
 						login(response)
 
 						await SecureStore.setItemAsync('token', response.token);
+						await SecureStore.setItemAsync("name", `${response.firstName} ${response.lastName}`)
 						await SecureStore.setItemAsync('id',response.userId);
 						await SecureStore.setItemAsync('permissionLevel', response.permissionLevel);
-						response.permissionLevel === 'admin'? navigation.replace('AdminScreens', { screen: 'BottomNav' }):navigation.replace('EmployeeScreens', {screen:"Employee Tasks"}) ;
+						response.permissionLevel === 'admin'? navigation.replace('AdminScreens',
+						{ screen: 'Admin', params:{ screen: 'BottomNav' }}):navigation.replace('EmployeeScreens', {
+							screen: 'Employees',
+							params: { screen: 'EmployeeBottomNav' },
+						  }); ;
 					} else {
-						Toast.show(response.message, {
+						Toast.show(response.message ||response.error, {
 							duration: Toast.durations.LONG,
 						});
 						formikActions.setSubmitting(false);
@@ -153,10 +159,17 @@ console.log(response)
 							onChangeText={handleChange('password')}
 							onBlur={handleBlur('password')}
 							value={values.password}
-							secureTextEntry={true}
+							secureTextEntry={!isPasswordVisible}
 							activeOutlineColor="#276ef1"
 							outlineColor="#276ef1"
 							blurOnSubmit
+							right={
+								<TextInput.Icon
+								  icon={isPasswordVisible ? 'eye' : 'eye-off'}
+								  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+								  iconColor="#276ef1"
+								/>
+							  }
 							style={LoginStyles.input}
 							theme={{ colors: { text: themeTextStyle , onSurface: themeTextStyle} }}
 							textColor={themeTextStyle}
