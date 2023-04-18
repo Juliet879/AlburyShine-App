@@ -88,7 +88,7 @@ console.log(response)
 						await SecureStore.setItemAsync('permissionLevel', response.permissionLevel);
 						response.permissionLevel === 'admin'? navigation.replace('AdminScreens',
 						{ screen: 'Admin', params:{ screen: 'BottomNav' }}):navigation.replace('EmployeeScreens', {
-							screen: 'Employees',
+							screen: 'Employee',
 							params: { screen: 'EmployeeBottomNav' },
 						  }); ;
 					} else {

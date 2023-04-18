@@ -77,16 +77,22 @@ const AllEmployees = ({ navigation }) => {
 
 
   useEffect(() => {
+
+  
     (async () => {
       const item = await SecureStore.getItemAsync("token");
       setToken(item);
+  
+     
     })();
-
     if (token !== null && token !== undefined) {
-    
       getEmployees();
+
+
     }
+
   }, [token]);
+  
 
 
 

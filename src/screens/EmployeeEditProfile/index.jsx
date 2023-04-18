@@ -34,6 +34,7 @@ const EditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
   const [employeeId, setEmployeeId] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -224,12 +225,17 @@ const EditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
                   icon={showPassword ? "eye-off" : "eye"}
                   onPress={() => setShowPassword(!showPassword)}
                 />
+                 <IconButton
+                  icon={"pen"}
+                  iconColor="#124aa1"
+                  onPress={() => setIsEditMode((item)=>!item)}
+                />
               </View>
-             
+      {isEditMode && (
         <Formik
           validationSchema={PasswordUpdateSchema}
           initialValues={{
-            password: " ",
+            password: "",
           }}
           onSubmit={handleSubmit}
         >
@@ -278,6 +284,8 @@ const EditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
             </>
           )}
         </Formik>
+      )}       
+        
       </>
     </ScrollView>
   );

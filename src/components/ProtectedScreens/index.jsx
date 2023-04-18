@@ -15,33 +15,29 @@ import { View } from "react-native";
 
 const ProtectedStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const CustomHeader = ({ navigation }) => {
+
+const CustomHeader = ({ navigation, showBackButton }) => {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <IconButton icon="arrow-left" onPress={() => navigation.goBack()} />
-      {/* Add other header components */}
+      {showBackButton && (
+        <IconButton icon="arrow-left" onPress={() => navigation.goBack()} iconColor="#124aa1" />
+      )}
+      <IconButton icon="menu" onPress={() => navigation.toggleDrawer()} iconColor="#124aa1"/>
     </View>
   );
 };
+
 
 export const AdminScreens = () => {
   return (
     <ProtectedStack.Navigator
     initialRouteName="BottomNav"
-    screenOptions={({ navigation }) => ({
-      // headerShown:false,
-      headerLeft: () => (
-        <TouchableOpacity
-          style={{ marginLeft: 15 }}
-          onPress={() => navigation.openDrawer()}
-        >
-          <MaterialIcons name="menu" size={24} />
-        </TouchableOpacity>
-      ),
-    })}
+   
     >
-      <ProtectedStack.Screen name="BottomNav" component={BottomNav} />
-      <ProtectedStack.Screen name="Add Tasks" component={AddTasks} />
+      <ProtectedStack.Screen name="BottomNav" component={BottomNav}   options={{
+          header: (props) => <CustomHeader {...props} showBackButton={false} />,
+        }}/>
+      <ProtectedStack.Screen name="Add Tasks" component={AddTasks} options={{ headerShown: true }}/>
       <ProtectedStack.Screen name="Add Employee" component={CreateEmployee} />
       <ProtectedStack.Screen name="Chat" component={Message}/>
       <ProtectedStack.Screen name="Channel List" component={ChannelListings}/>

@@ -200,7 +200,22 @@ const AddTasks = ({ navigation }) => {
         headers: headers,
         body: JSON.stringify(values),
       })
-        .then((response) => response.json())
+        .then((response) => {
+      
+          if (response.status === 403) {
+            Toast.show(`Your session has expired, kindly login and try again`, {
+              duration: Toast.durations.LONG,
+            });
+            SecureStore.deleteItemAsync("token")
+              .then(() => navigation.replace("Login Screen"))
+              .catch((error) =>
+                Toast.show(error.message, {
+                  duration: Toast.durations.LONG,
+                })
+              );
+          }
+          return response.json();
+        })
         .then(async (response) => {
           formikActions.setSubmitting(true);
           console.log(response);

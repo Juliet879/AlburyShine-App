@@ -71,16 +71,31 @@ const CreateEmployee = ({ navigation }) => {
         headers: headers,
         body: JSON.stringify(values),
       })
-        .then((response) => response.json())
+        .then((response) => {
+      
+          if (response.status === 403) {
+            Toast.show(`Your session has expired, kindly login and try again`, {
+              duration: Toast.durations.LONG,
+            });
+            SecureStore.deleteItemAsync("token")
+              .then(() => navigation.replace("Login Screen"))
+              .catch((error) =>
+                Toast.show(error.message, {
+                  duration: Toast.durations.LONG,
+                })
+              );
+          }
+          return response.json();
+        })
         .then((response) => {
           formikActions.setSubmitting(true);
           console.log(response);
           if (response.status === 200) {
-            Toast.show(response.data, {
+            Toast.show("Employee successfully added", {
               duration: Toast.durations.LONG,
             });
 
-            navigation.replace("All Employees");
+            navigation.goBack();
           }
           if (response.status === 400) {
             Toast.show(response.message, {
@@ -206,7 +221,7 @@ const CreateEmployee = ({ navigation }) => {
             )}
 
             <Button
-              onPress={() => handleSubmit()}
+              onPress={handleSubmit}
               mode="contained"
               loading={props.isSubmitting}
               uppercase={false}
