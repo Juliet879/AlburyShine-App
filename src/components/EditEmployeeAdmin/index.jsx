@@ -316,7 +316,7 @@ const AdminEditEmployee = ({ navigation, employee, modalVisible, onPress }) => {
                     uppercase={false}
                     style={styles.submit}
                     loading={props.isSubmitting}
-                    disabled={!isValid}
+                    // disabled={!isValid}
                     textColor="#ffffff"
                     labelStyle={buttonTextStyle}
                   >

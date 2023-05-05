@@ -60,7 +60,6 @@ const AdminTasks = ({ navigation }) => {
       })
       .then(async (response) => {
         if (response.success === false) {
-          console.log({ response });
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
           });
@@ -71,7 +70,6 @@ const AdminTasks = ({ navigation }) => {
         setIsLoading(true);
       })
       .catch((error) => {
-        console.log({ error });
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
       });
   };
@@ -111,7 +109,6 @@ const AdminTasks = ({ navigation }) => {
         setIsLoading(true);
       })
       .catch((error) => {
-        console.log({ error });
         Toast.show(`${error.message}`, { duration: Toast.durations.LONG });
       });
   };
@@ -132,8 +129,6 @@ const AdminTasks = ({ navigation }) => {
     const values = {
       taskId: id,
     };
-    console.log(JSON.stringify(values));
-    console.log({ token });
     fetch(`${API_URL}/employers/delete-task`, {
       method: "DELETE",
       headers: {
@@ -145,7 +140,6 @@ const AdminTasks = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then(async (response) => {
-        console.log(response);
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
@@ -159,13 +153,11 @@ const AdminTasks = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
         Toast.show(error.message, { duration: Toast.durations.LONG });
       });
   };
 
   const deleteConfirm = (id) => {
-    console.log({ id });
     //function to make two option alert
     Alert.alert(
       //title
@@ -187,18 +179,21 @@ const AdminTasks = ({ navigation }) => {
       //clicking out side of alert will not cancel
     );
   };
-
   const completedTasks = () => {
-    return tasks.filter((item) => item.completed === true);
+    return tasks.filter((item) => item.status === "Completed");
   };
 
-  const completed = tasks.length > 1 ? completedTasks() : null;
-  console.log({ completed });
+  const completed = tasks.length >= 1 ? completedTasks() : null;
   const inCompleteTasks = () => {
-    return tasks.filter((item) => item.completed !== true);
+    return tasks.filter((item) => item.status === "Not started");
   };
 
-  const inComplete = tasks.length > 1 ? inCompleteTasks() : null;
+  const inProgressTaks = () => {
+    return tasks.filter((item) => item.status === "In progress");
+  };
+  const inProgress = tasks.length >= 1 ? inProgressTaks() : null;
+
+  const inComplete = tasks.length >= 1 ? inCompleteTasks() : null;
   if (loading !== true) {
     return (
       <>
@@ -216,12 +211,12 @@ const AdminTasks = ({ navigation }) => {
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <Text style={styles.title}>Tasks Overview</Text>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap", }}>
         <Card.Title
           style={styles.completed}
           title={
             <Text style={styles.cards}>
-              {Array.isArray(completed) && completed.length > 1
+              {Array.isArray(completed) && completed.length >= 1
                 ? completed.length
                 : 0}
             </Text>
@@ -241,6 +236,20 @@ const AdminTasks = ({ navigation }) => {
             </Text>
           }
           subtitle={<Text style={styles.cardSub}>Incomplete </Text>}
+          left={(props) => (
+            <Avatar.Icon {...props} icon="folder" style={styles.icons} />
+          )}
+        />
+             <Card.Title
+          style={styles.inprogress}
+          title={
+            <Text style={styles.cards}>
+              {Array.isArray(inProgress) && inProgress.length >= 1
+                ? inProgress.length
+                : 0}
+            </Text>
+          }
+          subtitle={<Text style={styles.cardSub}>InProgress </Text>}
           left={(props) => (
             <Avatar.Icon {...props} icon="folder" style={styles.icons} />
           )}

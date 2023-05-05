@@ -23,12 +23,6 @@ const styles = StyleSheet.create({
         width:"45%",
         borderRadius:5
     },
-    inprogress:{
-        backgroundColor:"orange",
-        width:"45%",
-        borderRadius:5,
-        marginVertical:5
-    },
     title:{
         color:"#000000",
         fontSize:18,
@@ -65,6 +59,13 @@ const styles = StyleSheet.create({
         margin: 16,
         right: 0,
         bottom: 0,
+        backgroundColor:"#276EF1",
+      },
+      chat: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 60,
         backgroundColor:"#276EF1",
       },
 

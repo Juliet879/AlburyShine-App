@@ -12,6 +12,8 @@ import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton } from "react-native-paper";
 import { View } from "react-native";
+import Invoice from "../../screens/Invoice";
+import CreateInvoice from "../../screens/CreatInvoice";
 
 const ProtectedStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -38,10 +40,12 @@ export const AdminScreens = () => {
           header: (props) => <CustomHeader {...props} showBackButton={false} />,
         }}/>
       <ProtectedStack.Screen name="Add Tasks" component={AddTasks} options={{ headerShown: true }}/>
-      <ProtectedStack.Screen name="Add Employee" component={CreateEmployee} />
-      <ProtectedStack.Screen name="Chat" component={Message}/>
-      <ProtectedStack.Screen name="Channel List" component={ChannelListings}/>
-      <ProtectedStack.Screen name="Thread Screen" component={ThreadScreen}/>
+      <ProtectedStack.Screen name="Add Employee" component={CreateEmployee} options={{ headerShown: true }} />
+      <ProtectedStack.Screen name="Chat" component={Message} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Channel List" component={ChannelListings} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Thread Screen" component={ThreadScreen} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Invoice-PDF" component={Invoice} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Create Invoice" component={CreateInvoice} options={{ headerShown: true }}/>
     </ProtectedStack.Navigator>
   );
 };

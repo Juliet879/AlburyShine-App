@@ -67,9 +67,9 @@ const Layout = ()=>{
             setInitialRouteName("Unauthorized")
         }
       }, [ isLoading, token, role]);
-      if (!clientIsReady) {
-        return <Text>Loading chat ...</Text>
-      }
+      // if (!clientIsReady) {
+      //   return <Text>Loading chat ...</Text>
+      // }
       if (isLoading) {
         return <InitialScreen />;
       }

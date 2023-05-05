@@ -2,6 +2,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TimeSheet from '../../screens/Timesheet';
 import AdminTasks from '../../screens/AdminTasks';
 import AllEmployees from '../../screens/AllEmployees';
+import CreateInvoice from '../../screens/CreatInvoice';
+import EmployeeInvoiceList from '../../screens/EmployeeInvoiceList';
 import {
 	Ionicons,
   FontAwesome5
@@ -31,6 +33,12 @@ const BottomNav = ()=> {
                 iconColor =focused ?  '#124aa1' : '#828282'
 
             }
+            else if (route.name === 'Invoice') {
+              iconName = focused ? 'file-invoice-dollar' : 'file-invoice-dollar';
+              iconColor =focused ?  '#124aa1' : '#828282'
+
+          }
+
             return < FontAwesome5 name={iconName} size={size} color={iconColor} />;
         },
     })}
@@ -38,6 +46,7 @@ const BottomNav = ()=> {
       <Tab.Screen name="Tasks" component={AdminTasks} />
       <Tab.Screen name="All Employees" component={AllEmployees} />
       <Tab.Screen name="Timesheet" component={TimeSheet} />
+      <Tab.Screen name="Invoice" component={EmployeeInvoiceList}/>
     </Tab.Navigator>
   );
 }
