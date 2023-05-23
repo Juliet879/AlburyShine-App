@@ -243,7 +243,7 @@ const EditTasks = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={"#276EF1"} barStyle="light-content" />
-      <Text style={styles.title}>Add Task</Text>
+      <Text style={styles.title}>Edit Task</Text>
       <ScrollView>
       <Formik
         // validationSchema={tasksValidationSchema}

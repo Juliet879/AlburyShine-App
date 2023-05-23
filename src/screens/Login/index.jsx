@@ -80,7 +80,7 @@ console.log(response)
 						Toast.show(`Login was successfull`, {
 							duration: Toast.durations.LONG,
 						});
-						login(response)
+					
 
 						await SecureStore.setItemAsync('token', response.token);
 						await SecureStore.setItemAsync("name", `${response.firstName} ${response.lastName}`)
@@ -90,7 +90,8 @@ console.log(response)
 						{ screen: 'Admin', params:{ screen: 'BottomNav' }}):navigation.replace('EmployeeScreens', {
 							screen: 'Employee',
 							params: { screen: 'EmployeeBottomNav' },
-						  }); ;
+						  }); 
+						  login(response)
 					} else {
 						Toast.show(response.message ||response.error, {
 							duration: Toast.durations.LONG,

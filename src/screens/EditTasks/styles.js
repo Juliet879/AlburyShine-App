@@ -1,76 +1,146 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from 'react-native';
 
 const styles = StyleSheet.create({
-    cards:{
-        color:"#ffffff",
-        fontSize:24,
-    },
-    cardSub:{
-        color:"#ffffff",
-        fontSize:13,
-    },
-    icons:{
-        color:"#000000",
-        backgroundColor:"#ffffff"
-    },
-    completed:{
-        backgroundColor:"#01B5B4",
-        borderRadius:5,
-        width:"45%"
-    },
-    incomplete:{
-        backgroundColor:"#FF2971",
-        width:"45%",
-        borderRadius:5
-    },
-    inprogress:{
-        backgroundColor:"orange",
-        width:"45%",
-        borderRadius:5,
-        marginVertical:5
-    },
-    title:{
+	container: {
+		flex: 1,
+		// justifyContent: 'center',
+		padding: 20,
+		// minHeight: Math.round(Dimensions.get('window').height),
+	},
+	image: {
+		alignSelf: 'center',
+		marginBottom:"5%"
+	},
+	input: {
+		backgroundColor: 'none',
+		marginBottom:"5%",
+		
+	},
+	welcome: {
+		color: '#124AA1',
+		fontSize: 25,
+		marginBottom: 20,
+		paddingVertical: 40,
+	},
+	submit: {
+		backgroundColor: '#276EF1',
+		textDecorationStyle: 'capitalized',
+		marginVertical: 20,
+		paddingVertical: 5,
+		borderRadius:5
+	},
+	button:{
+		backgroundColor: 'transparent',
+		textDecorationStyle: 'capitalized',
+		marginVertical: 20,
+		paddingVertical: 5,
+		borderRadius:5,
+		borderColor:"#276EF1"
+	},
+	high:{
+		backgroundColor: '#A0616A',
+		textDecorationStyle: 'capitalized',
+		marginVertical: 20,
+		paddingVertical: 5,
+		// paddingHorizontal:10,
+		borderRadius:5,
+		
+	
+
+	},
+	medium:{
+		backgroundColor: '#Fee181',
+		textDecorationStyle: 'capitalized',
+		marginVertical: 20,
+		paddingVertical: 5,
+		borderRadius:5
+
+	},
+	low:{
+		backgroundColor: '#06c258',
+		textDecorationStyle: 'capitalized',
+		marginVertical: 20,
+		paddingVertical: 5,
+		borderRadius:5
+
+	},
+	modalButton: {
+		backgroundColor: '#124AA1',
+		textDecorationStyle: 'capitalized',
+		marginTop: 20,
+		paddingVertical: 5,
+		// width: '60%',
+		// marginLeft:"20%"
+	},
+	lightButtonColor: {
+		color: '#ffffff',
+	},
+	darkButtonColor: {
+		color: '#ffffff',
+	},
+	password: {
+		color: '#252524',
+		alignSelf: 'center',
+	},
+	errorText: {
+		fontSize: 12,
+		color: 'red',
+	},
+	lightTextColor: {
+		color: '#276EF1',
+	},
+	darkTextColor: {
+		color: '#276EF1',
+	},
+	centeredView: {
+		// height: '100%',
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backfaceVisibility: 'hidden',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+
+		// marginVertical: 'auto',
+	},
+	modalView: {
+		alignContent: 'center',
+		backgroundColor: 'white',
+		borderRadius: 5,
+		padding: 15,
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.5,
+		shadowRadius: 4,
+		elevation: 2,
+		// height: '30%',
+		width: '90%',
+	},
+	details: {
+		justifyContent: 'center',
+		alignItems: 'flex-start',
+		padding: 10,
+	},
+	containerDetails: {
+		flex: 1,
+		flexDirection: "row",
+		padding: 10,
+		flexWrap:"wrap",
+		marginBottom:30
+		
+
+		// justifyContent:"space-between"
+	
+	  },
+	  title:{
         color:"#000000",
         fontSize:18,
         textAlign:"center",
         fontWeight:"bold",
         marginVertical:10
     },
-    container: {
-        flexDirection: "row",
-        justifyContent:"space-between",
-        padding: 10,
-        marginBottom: 10,      
-        borderBottomWidth:1
-      },
-      heading: {
-		fontSize: 24,
-		fontWeight: 'bold',
-		paddingVertical: 20,
-	},
-    taskDelete:{
-        color:"#000000",
-        backgroundColor:"transparent"
+});
 
-    },
-    activity:{
-        marginVertical:65
-    },
-    activityText:{
-        textAlign:"center",
-        color:"#276EF1"
-    },
-    fab: {
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0,
-        backgroundColor:"#276EF1",
-      },
-
-
-      
-
-})
-
-export default styles
+export default styles;

@@ -13,7 +13,7 @@ import Toast from "react-native-root-toast";
 import styles from "./styles";
 
 
-const EmployeeInvoice = ({route,navigation})=>{
+const EmployeeInvoice = ({route, navigation})=>{
   const { userId } = route.params;
     const [invoices, setInvoices] = useState([]);
     const [loading, setIsLoading] = useState(true);
