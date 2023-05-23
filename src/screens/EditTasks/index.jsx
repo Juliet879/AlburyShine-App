@@ -28,7 +28,9 @@ import styles from "./styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import UserModal from "../../components/EmployeesModal";
 
-const AddTasks = ({ navigation }) => {
+
+const EditTasks = ({ route, navigation }) => {
+    const { taskId } = route.params;
   const [start_date, setStartDate] = useState(new Date());
   const [end_date, setEndDate] = useState(new Date());
   const [mode, setMode] = useState("date");
@@ -195,8 +197,8 @@ const AddTasks = ({ navigation }) => {
       "Content-Type": "application/json",
     };
     try {
-      fetch(`${API_URL}/employers/add-task`, {
-        method: "POST",
+      fetch(`${API_URL}/employers/update-task/${taskId}`, {
+        method: "PATCH",
         headers: headers,
         body: JSON.stringify(values),
       })
@@ -581,7 +583,7 @@ const AddTasks = ({ navigation }) => {
                 textColor="#ffffff"
                 labelStyle={buttonTextStyle}
               >
-                Add Task
+                Edit Task
               </Button>
             </>
           );
@@ -591,4 +593,4 @@ const AddTasks = ({ navigation }) => {
     </View>
   );
 };
-export default AddTasks;
+export default EditTasks;

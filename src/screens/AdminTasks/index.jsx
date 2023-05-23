@@ -140,6 +140,18 @@ const AdminTasks = ({ navigation }) => {
     })
       .then((response) => response.json())
       .then(async (response) => {
+        if (response.status === 403 || response.status === 401) {
+          Toast.show(`Your session has expired, kindly login and try again`, {
+            duration: Toast.durations.LONG,
+          });
+          SecureStore.deleteItemAsync("token")
+            .then(() => navigation.replace("Login Screen"))
+            .catch((error) =>
+              Toast.show(error.message, {
+                duration: Toast.durations.LONG,
+              })
+            );
+        }
         if (response.status === 200) {
           Toast.show(response.message, {
             duration: Toast.durations.LONG,
@@ -287,12 +299,10 @@ const AdminTasks = ({ navigation }) => {
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  key={item.editId}
+                  key={item.taskId}
                   style={{ color: "#333235" }}
-                  //   onPress={()=>{
-                  //     deleteConfirm(item.taskId)
-                  // }
-                  // }
+                    onPress={()=> navigation.navigate("Edit Tasks", {taskId: item.taskId})
+                  }
                 >
                   <List.Item
                     right={() => (
@@ -303,7 +313,7 @@ const AdminTasks = ({ navigation }) => {
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  key={item.id}
+                  key={item.taskId}
                   style={{ color: "#333235" }}
                   onPress={() => {
                     deleteConfirm(item.taskId);

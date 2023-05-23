@@ -5,14 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Alert
+  Alert,
 } from "react-native";
-import {
-  Divider,
-  List,
-  ActivityIndicator,
-  FAB
-} from "react-native-paper";
+import { Divider, List, ActivityIndicator, FAB } from "react-native-paper";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-root-toast";
@@ -28,7 +23,7 @@ const EmployeeInvoiceList = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedData, setSelectedData] = useState({});
   const [employees, setEmployees] = useState();
-  const [editmodal, setEditModalVisible] = useState(false)
+  const [editmodal, setEditModalVisible] = useState(false);
 
   const getEmployees = () => {
     const headers = {
@@ -39,9 +34,10 @@ const EmployeeInvoiceList = ({ navigation }) => {
     fetch(`${API_URL}/employers/all-employees`, {
       headers,
     })
-      .then((response) => {
-      
-        if (response.status === 403) {
+      .then((response) => response.json())
+      .then(async (response) => {
+        console.log({ response });
+        if (response.status === 403 || response.status === 401) {
           Toast.show(`Your session has expired, kindly login and try again`, {
             duration: Toast.durations.LONG,
           });
@@ -53,17 +49,13 @@ const EmployeeInvoiceList = ({ navigation }) => {
               })
             );
         }
-        return response.json();
-      })
-      .then(async (response) => {
-        console.log({response})
         if (response.success === false) {
           console.log({ response });
           Toast.show(response.error, {
             duration: Toast.durations.LONG,
           });
         }
-      
+
         setEmployees(response.data);
         // response.data ? setEmployees(response.data) : setEmployees([]);
         setIsLoading(true);
@@ -74,44 +66,34 @@ const EmployeeInvoiceList = ({ navigation }) => {
       });
   };
 
-
-
   useEffect(() => {
-
-  
     (async () => {
       const item = await SecureStore.getItemAsync("token");
       setToken(item);
-  
-     
     })();
     if (token !== null && token !== undefined) {
       getEmployees();
-
-
     }
-
   }, [token]);
-  
 
-
-
-
-
-  if(loading !== true){
+  if (loading !== true) {
     return (
       <>
-       <ActivityIndicator animating={true} color="#276EF1" size="large" style={styles.activity}/>
-       <Text style={styles.activityText}>Loading ...</Text>
+        <ActivityIndicator
+          animating={true}
+          color="#276EF1"
+          size="large"
+          style={styles.activity}
+        />
+        <Text style={styles.activityText}>Loading ...</Text>
       </>
-    )
-    }
-
+    );
+  }
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-    <Text style={styles.title}>Employees Inventory List</Text>
-  
+      <Text style={styles.title}>Employees Invoice List</Text>
+
       <SafeAreaView>
         {/* <Text style={styles.heading}>Tasks</Text> */}
         <FlatList
@@ -124,61 +106,56 @@ const EmployeeInvoiceList = ({ navigation }) => {
             >
               <TouchableOpacity
                 key={item.id}
-                style={{ width:"62%"}}
+                style={{ width: "62%" }}
                 onPress={() => {
                   setSelectedId(item.id);
-                  setModalVisible(true);
+                  navigation.navigate('Employee Invoice', {
+                    userId: item.id,
+                  });
                   setSelectedData(item);
                 }}
               >
-                    <List.Item
-                    title={ <Text style={{ color: "#333235"}}>{item.firstName} {item.lastName}</Text>}
-                    left={() => (
-                        <>
-                          <List.Icon icon="account" color="#276EF1" />
-                        </>
-                      )}
-                    />
-              
-           
-            
-               
+                <List.Item
+                  title={
+                    <Text style={{ color: "#333235" }}>
+                      {item.firstName} {item.lastName}
+                    </Text>
+                  }
+                  left={() => (
+                    <>
+                      <List.Icon icon="account" color="#276EF1" />
+                    </>
+                  )}
+                />
               </TouchableOpacity>
               <TouchableOpacity
-              key={item.editId}
-              style={{ color: "#333235" }}
-              onPress={()=>{
-               setSelectedData(item);
-               setSelectedId(item.id);
-            }
-            }
+                key={item.editId}
+                style={{ color: "#333235" }}
+                onPress={() => {
+                  setSelectedData(item);
+                  setSelectedId(item.id);
+                }}
               >
-              <List.Item
-              
-              right={() => (
-                <>
-                  <List.Icon icon="file" color="#059142" />
-                </>
-              )}
-            />
+                <List.Item
+                  right={() => (
+                    <>
+                      <List.Icon icon="file" color="#059142" />
+                    </>
+                  )}
+                />
               </TouchableOpacity>
-           
-          
             </View>
           )}
         />
-
       </SafeAreaView>
-      <Divider/>
+      <Divider />
 
       <FAB
-    icon="account-plus"
-    label="Create Invoice"
-    style={styles.fab}
-    onPress={() => navigation.navigate('Create Invoice')}
-  />
-     
-     
+        icon="account-plus"
+        label="Create Invoice"
+        style={styles.fab}
+        onPress={() => navigation.navigate("Create Invoice")}
+      />
     </View>
   );
 };

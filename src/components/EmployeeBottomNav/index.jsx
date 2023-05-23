@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import EmployeeTasks from '../../screens/EmployeeTasks';
 import ChannelListings from '../Chat/ChannelList';
-import Invoice from '../../screens/EmployeeInvoice';
+import Invoice from '../../screens/EmployeeInvoiceAdmin';
+import EmployeeInvoiceSingleList from '../../screens/EmployeeInvoiceSingleList';
 import {
 	Ionicons,
   FontAwesome5
@@ -26,7 +27,7 @@ const EmployeeBottomNav = ()=> {
                 iconName = focused ? 'comment-alt' : 'comment-alt';
                 iconColor =focused ?  '#124aa1' : '#828282'
 
-            } else if (route.name === 'Invoice') {
+            } else if (route.name === 'My Invoices') {
                 iconName = focused ? 'file-invoice-dollar' : 'file-invoice-dollar';
                 iconColor =focused ?  '#124aa1' : '#828282'
 
@@ -37,7 +38,7 @@ const EmployeeBottomNav = ()=> {
     >
       <Tab.Screen name="Employee Tasks" component={EmployeeTasks} />
       <Tab.Screen name="Channel List" component={ChannelListings}/>
-      <Tab.Screen name="Invoice" component={Invoice} />
+      <Tab.Screen name="My Invoices" component={EmployeeInvoiceSingleList} />
     </Tab.Navigator>
   );
 }

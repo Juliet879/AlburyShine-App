@@ -14,6 +14,8 @@ import { IconButton } from "react-native-paper";
 import { View } from "react-native";
 import Invoice from "../../screens/Invoice";
 import CreateInvoice from "../../screens/CreatInvoice";
+import EmployeeInvoice from "../../screens/EmployeeInvoiceAdmin";
+import EditTasks from "../../screens/EditTasks";
 
 const ProtectedStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -46,6 +48,8 @@ export const AdminScreens = () => {
       <ProtectedStack.Screen name="Thread Screen" component={ThreadScreen} options={{ headerShown: true }}/>
       <ProtectedStack.Screen name="Invoice-PDF" component={Invoice} options={{ headerShown: true }}/>
       <ProtectedStack.Screen name="Create Invoice" component={CreateInvoice} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Employee Invoice" component={EmployeeInvoice} options={{ headerShown: true }}/>
+      <ProtectedStack.Screen name="Edit Tasks" component={EditTasks} options={{ headerShown: true }}/>
     </ProtectedStack.Navigator>
   );
 };
