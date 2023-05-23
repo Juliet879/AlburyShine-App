@@ -122,7 +122,7 @@ const EmployeeInvoiceSingleList = ({navigation})=>{
                       }
                       left={() => (
                         <>
-                          <List.Icon icon="file-invoice-dollar" color="#276EF1" />
+                          <List.Icon icon="file" color="#276EF1" />
                         </>
                       )}
                     />
