@@ -102,7 +102,7 @@ const EmployeeInvoiceSingleList = ({navigation})=>{
           <SafeAreaView>
             {/* <Text style={styles.heading}>Tasks</Text> */}
             <FlatList
-              data={employees}
+              data={invoices}
               renderItem={({ item }) => (
                 <View
                   style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -117,7 +117,7 @@ const EmployeeInvoiceSingleList = ({navigation})=>{
                     <List.Item
                       title={
                         <Text style={{ color: "#333235" }}>
-                          {item.createdAt}
+                          {new Date(item.createdAt?._seconds * 1000 + item.createdAt?._nanoseconds / 1000000).toLocaleDateString()}
                         </Text>
                       }
                       left={() => (
